@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+*.log
+o.txt
+gpu_out.txt
+amort*.log
+bench_gpu.log
+run_*.log
+
+# papers are third-party PDFs; not ours to redistribute
+papers/**/*.pdf
+
+# large regenerable artefacts (recreate with sim/gen_figdata*.py)
+sim/*.npz
+sim/*.pkl

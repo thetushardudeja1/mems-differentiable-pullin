@@ -1,0 +1,15 @@
+name: mems
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip
+  - pip:
+      # CPU build. The distributed beam solver needs float64 and is CPU-bound
+      # (see README: consumer GPUs run fp64 at ~1/64 rate). For the fp32
+      # dynamics/RL workloads install "jax[cuda12]" instead.
+      - jax==0.10.2
+      - jaxlib==0.10.2
+      - numpy>=1.26
+      - matplotlib>=3.8
+      - pypdf>=4.0
