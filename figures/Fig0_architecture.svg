@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 426" width="940" height="426"
+     font-family="DejaVu Sans, Helvetica, Arial, sans-serif">
+  <title>Differentiable MEMS pull-in: system architecture</title>
+  <desc>A differentiable pull-in solver that targets the saddle-node
+  bifurcation directly, via the extended fold system, and returns exact
+  gradients of pull-in voltage with respect to electrode geometry. Three
+  capabilities follow: inverse design, an amortized design network, and a
+  safe-operation reinforcement-learning policy. No training dataset and no
+  commercial licence are used.</desc>
+
+  <!-- AUTHORING NOTES
+       1. Every string is its own <text> with an explicit x. Nested <tspan>
+          with dx/dy inside text-anchor="middle" is NOT reliable under
+          cairosvg: it ignores the tspan advance when computing the anchor
+          and silently overlaps the glyphs.
+       2. The normalisation row of the fold system is written as |v| = 1
+          rather than v^T v - 1 = 0. They are the same condition, and this
+          form needs no superscript, which is the same tspan trap as (1).
+       3. Glyph coverage checked against DejaVu Sans, the only sans face
+          available to the converter. -->
+
+  <rect width="940" height="426" fill="#ffffff"/>
+
+  <!-- ===================== the solver, at the top ===================== -->
+  <rect x="40" y="0" width="860" height="96" rx="5" fill="#1F3B63"/>
+  <text x="470" y="33" font-size="25" font-weight="bold" fill="#ffffff"
+        text-anchor="middle">Differentiable pull-in solver</text>
+  <text x="470" y="57" font-size="14" fill="#AFC3DA" text-anchor="middle">solves the saddle-node bifurcation directly  ·  exact gradients, no surrogate fitting</text>
+  <!-- the three rows of the fold system, positioned individually: SVG
+       collapses runs of whitespace, so padding them apart inside one <text>
+       does not survive the render. -->
+  <text x="312" y="84" font-size="17" fill="#ffffff" text-anchor="middle">R(Y, Λ) = 0</text>
+  <text x="490" y="84" font-size="17" fill="#ffffff" text-anchor="middle">J(Y, Λ) v = 0</text>
+  <text x="648" y="84" font-size="17" fill="#ffffff" text-anchor="middle">‖v‖ = 1</text>
+
+  <!-- distribution connector -->
+  <line x1="470" y1="96" x2="470" y2="112" stroke="#1F3B63" stroke-width="2"/>
+  <line x1="153" y1="112" x2="787" y2="112" stroke="#1F3B63" stroke-width="2"
+        stroke-dasharray="7 5"/>
+  <line x1="153" y1="112" x2="153" y2="130" stroke="#1F3B63" stroke-width="2"/>
+  <line x1="470" y1="112" x2="470" y2="130" stroke="#1F3B63" stroke-width="2"/>
+  <line x1="787" y1="112" x2="787" y2="130" stroke="#1F3B63" stroke-width="2"/>
+
+  <!-- =========================== capability 1 =========================== -->
+  <rect x="0" y="130" width="306" height="48" rx="5" fill="#1F3B63"/>
+  <text x="153" y="161" font-size="20" font-weight="bold" fill="#ffffff"
+        text-anchor="middle">Inverse design</text>
+
+  <rect x="0" y="190" width="306" height="170" rx="5"
+        fill="#EDEEF1" stroke="#D5D8DE" stroke-width="1"/>
+  <circle cx="22" cy="218" r="2.6" fill="#1F3B63"/>
+  <text x="36" y="223" font-size="15" font-weight="bold" fill="#14213D">22.86 V → 13.60 V  (−41%)</text>
+  <text x="36" y="241" font-size="13" fill="#55606E">electrode shape alone</text>
+  <circle cx="22" cy="268" r="2.6" fill="#1F3B63"/>
+  <text x="36" y="273" font-size="15" font-weight="bold" fill="#14213D">No new mask or process step</text>
+  <text x="36" y="291" font-size="13" fill="#55606E">same fabrication flow</text>
+  <circle cx="22" cy="318" r="2.6" fill="#1F3B63"/>
+  <text x="36" y="323" font-size="15" font-weight="bold" fill="#14213D">15 s on a laptop CPU</text>
+  <text x="36" y="341" font-size="13" fill="#55606E">no commercial licence</text>
+
+  <!-- =========================== capability 2 =========================== -->
+  <rect x="317" y="130" width="306" height="48" rx="5" fill="#1F3B63"/>
+  <text x="470" y="161" font-size="20" font-weight="bold" fill="#ffffff"
+        text-anchor="middle">Amortized network</text>
+
+  <rect x="317" y="190" width="306" height="170" rx="5"
+        fill="#EDEEF1" stroke="#D5D8DE" stroke-width="1"/>
+  <circle cx="339" cy="218" r="2.6" fill="#1F3B63"/>
+  <text x="353" y="223" font-size="15" font-weight="bold" fill="#14213D">0.04 ms per design</text>
+  <text x="353" y="241" font-size="13" fill="#55606E">spec → geometry, one pass</text>
+  <circle cx="339" cy="268" r="2.6" fill="#1F3B63"/>
+  <text x="353" y="273" font-size="15" font-weight="bold" fill="#14213D">0 stored simulations</text>
+  <text x="353" y="291" font-size="13" fill="#55606E">trained through the solver</text>
+  <circle cx="339" cy="318" r="2.6" fill="#1F3B63"/>
+  <text x="353" y="323" font-size="15" font-weight="bold" fill="#14213D">0.56% spec error</text>
+  <text x="353" y="341" font-size="13" fill="#55606E">hard-constraint layer</text>
+
+  <!-- =========================== capability 3 =========================== -->
+  <rect x="634" y="130" width="306" height="48" rx="5" fill="#1F3B63"/>
+  <text x="787" y="161" font-size="20" font-weight="bold" fill="#ffffff"
+        text-anchor="middle">Safe-operation RL</text>
+
+  <rect x="634" y="190" width="306" height="170" rx="5"
+        fill="#EDEEF1" stroke="#D5D8DE" stroke-width="1"/>
+  <circle cx="656" cy="218" r="2.6" fill="#1F3B63"/>
+  <text x="670" y="223" font-size="15" font-weight="bold" fill="#14213D">+12.8% usable travel</text>
+  <text x="670" y="241" font-size="13" fill="#55606E">from tolerance margin</text>
+  <circle cx="656" cy="268" r="2.6" fill="#1F3B63"/>
+  <text x="670" y="273" font-size="15" font-weight="bold" fill="#14213D">0.0% devices destroyed</text>
+  <text x="670" y="291" font-size="13" fill="#55606E">1,536 test episodes</text>
+  <circle cx="656" cy="318" r="2.6" fill="#1F3B63"/>
+  <text x="670" y="323" font-size="15" font-weight="bold" fill="#14213D">Learns each device's ceiling</text>
+  <text x="670" y="341" font-size="13" fill="#55606E">which cannot be measured</text>
+
+  <!-- ===================== what underwrites all three ===================== -->
+  <rect x="0" y="374" width="940" height="52" rx="5" fill="#1F3B63"/>
+  <text x="470" y="399" font-size="17" font-weight="bold" fill="#ffffff"
+        text-anchor="middle">No training dataset.  No commercial licence.</text>
+  <text x="470" y="418" font-size="13" fill="#AFC3DA" text-anchor="middle">validated against 8 independent sources, 1967–2025  ·  exact gradient verified to 0.00%</text>
+</svg>

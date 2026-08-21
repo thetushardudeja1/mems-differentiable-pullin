@@ -38,11 +38,10 @@ fixed--fixed geometries.
 
 \begin{figure*}[t]
 \centering\includegraphics[width=\textwidth]{Fig0_architecture.pdf}
-\caption{System architecture. Standard practice fits a surrogate to
-$\sim$10$^4$ FEM runs and then optimises through its approximation error; we
-differentiate the physics itself. The exact gradient
-$\partial V_{\rm PI}/\partial d(x)$ is the single object that all three
-capabilities consume.}
+\caption{System architecture. Solving the extended fold system directly makes
+the bifurcation a root of a regular system, so the implicit function theorem
+returns $\partial V_{\rm PI}/\partial d(x)$ exactly. That single object is what
+all three capabilities consume, and it is why none of them needs a dataset.}
 \label{fig:arch}
 \end{figure*}
 

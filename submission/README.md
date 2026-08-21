@@ -67,10 +67,26 @@ Required packages: `IEEEtran`, `booktabs`, `graphicx`, `amsmath`, `amssymb`,
 | Fig. 5 | `Fig5_amortized_sweep.pdf` | spec sweep; constraint-layer error reduction |
 
 The report uses Figs. 0, 1, 2 and 4. Figs. 3 and 5 live in the Results &
-Validation document, which has no page limit. All are IEEE-width vector PDFs
-(7.16 in double column), 8 pt fonts, ticks inward, colour-blind-safe palette,
-Type-42 fonts. Regenerate with `python make_figures.py` and
+Validation document, which has no page limit. All are IEEE-width vector PDFs,
+7.16 in double column. Regenerate with `python make_figures.py` and
 `python make_arch.py`.
+
+**Figs. 1–5** are matplotlib plots: 8 pt fonts, ticks inward on all four sides,
+colour-blind-safe Okabe-Ito palette, Type-42 fonts.
+
+**Fig. 0 is different** — it is a block diagram, not a plot, so its source of
+truth is a hand-authored SVG, `figures/Fig0_architecture.svg`. Edit that file;
+`make_arch.py` only converts it to PDF and PNG. Two traps if you edit it:
+
+* Do **not** nest `<tspan>` with `dx`/`dy` inside a `text-anchor="middle"`
+  element. cairosvg ignores the tspan advance when computing the anchor and
+  silently overlaps the glyphs. Give every string its own `<text>` with an
+  explicit `x`.
+* SVG collapses runs of whitespace, so you cannot pad items apart inside one
+  `<text>`. Position them separately (as the three fold-system rows are).
+
+Only DejaVu Sans is guaranteed to the converter, so check glyph coverage before
+introducing a new symbol.
 
 ## Before submitting
 

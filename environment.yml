@@ -13,3 +13,7 @@ dependencies:
       - numpy>=1.26
       - matplotlib>=3.8
       - pypdf>=4.0
+      # demo.ipynb
+      - jupyterlab>=4.0
+      # converts the hand-authored figures/Fig0_architecture.svg to PDF/PNG
+      - cairosvg>=2.7
