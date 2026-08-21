@@ -69,6 +69,29 @@ surrogate baselines 10 min) are **not** re-run in the notebook — the arrays ar
 committed and the exact command for each is given, since the full codebase is
 released for scale-up.
 
+### Optional: an interactive version
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/thetushardudeja1/mems-differentiable-pullin/blob/main/notebooks/interactive_cockpit.ipynb)
+&nbsp;[`notebooks/interactive_cockpit.ipynb`](notebooks/interactive_cockpit.ipynb)
+
+If you would rather *drive* the method than read it. Four sliders, each of which
+re-solves the **real saddle-node bifurcation** on every drag — nothing
+interpolated, tabulated or cached, with the fold residual printed each frame so
+you can see it is a converged solve:
+
+| | |
+|---|---|
+| **Design cockpit** | reshape the electrode; V<sub>PI</sub> and the exact sensitivity ∂V<sub>PI</sub>/∂D(ξ) update in ~15 ms per solve |
+| **Beat the optimiser** | hand-tune a device, then watch gradient descent do it |
+| **Instant design** | move a *specification*; a finished device appears in 0.04 ms. Toggle the constraint layer and watch spec error go 0.56% → exactly 0 |
+| **Adaptive control** | 512 devices with hidden failure ceilings, evaluated live in 0.8 s |
+
+Measured at **5 minutes** on a laptop CPU — longer than the notebook above,
+because it compiles the interactive kernels. It deliberately **skips** the
+validation suite and the reversal sweep, since those are the primary notebook's
+job. Sliders need a live kernel; on GitHub each interactive cell shows the
+static snapshot printed above it.
+
 ---
 
 ## Table of contents
@@ -399,6 +422,7 @@ python inverse_design.py          # free-form design, both BCs ~15 min
 | `sim/surrogate_fair.py`, `fno_surrogate.py` | MLP / FNO surrogate baselines |
 | `sim/model2dof.py` | Classical charge-control baseline |
 | `notebooks/MEMS_differentiable_pullin.ipynb` | Colab notebook, ~4 min, every fast experiment live (outputs included) |
+| `notebooks/interactive_cockpit.ipynb` | Optional interactive version: sliders that re-solve the fold live |
 | `sim/make_arch.py` | System architecture diagram (Fig. 0) |
 | `papers/README.md` | Reference library index (what each paper is used for) |
 | `submission/` | ISMC 2026 deliverables |
