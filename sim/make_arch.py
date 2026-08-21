@@ -19,14 +19,15 @@ SRC = "../figures/Fig0_architecture.svg"
 OUT_PDF = "../figures/Fig0_architecture.pdf"
 OUT_PNG = "../figures/Fig0_architecture.png"
 
-# IEEE double-column width. The SVG viewBox is 940 units wide, so this is the
-# scale at which the font sizes in it were budgeted (15 units -> ~8.2 pt).
+# IEEE double-column width. The SVG viewBox is 972 units wide -- 940 of content
+# plus a 16-unit margin on each side -- and that is the scale the font sizes in
+# it were budgeted against (15 units -> ~8 pt).
 WIDTH_IN = 7.16
+VIEWBOX_W = 972
 
 # cairosvg's output_width is in CSS pixels at 96 dpi, NOT points. Passing
 # inches*72 silently produced a 5.37 in PDF instead of 7.16 in.
 WIDTH_PX = WIDTH_IN * 96.0
-
 
 def main():
     try:
@@ -40,7 +41,7 @@ def main():
         sys.exit(f"missing {SRC}")
 
     cairosvg.svg2pdf(url=SRC, write_to=OUT_PDF, output_width=WIDTH_PX)
-    cairosvg.svg2png(url=SRC, write_to=OUT_PNG, output_width=940 * 2)
+    cairosvg.svg2png(url=SRC, write_to=OUT_PNG, output_width=VIEWBOX_W * 2)
 
     for f in (OUT_PDF, OUT_PNG):
         print(f"  wrote {f}  ({os.path.getsize(f) / 1024:.0f} kB)")

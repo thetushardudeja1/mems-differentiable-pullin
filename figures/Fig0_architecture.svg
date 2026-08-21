@@ -1,4 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 426" width="940" height="426"
+<!-- The content is laid out on 0..940 x 0..426. The viewBox is inset by MARGIN
+     on every side so nothing sits flush against the page edge: box strokes are
+     centred on the rectangle edge, so at x=0 half the stroke would be clipped,
+     and in a LaTeX float the figure would butt straight into the text. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-16 -16 972 458" width="972" height="458"
      font-family="DejaVu Sans, Helvetica, Arial, sans-serif">
   <title>Differentiable MEMS pull-in: system architecture</title>
   <desc>A differentiable pull-in solver that targets the saddle-node
@@ -19,7 +23,7 @@
        3. Glyph coverage checked against DejaVu Sans, the only sans face
           available to the converter. -->
 
-  <rect width="940" height="426" fill="#ffffff"/>
+  <rect x="-16" y="-16" width="972" height="458" fill="#ffffff"/>
 
   <!-- ===================== the solver, at the top ===================== -->
   <rect x="40" y="0" width="860" height="96" rx="5" fill="#1F3B63"/>
