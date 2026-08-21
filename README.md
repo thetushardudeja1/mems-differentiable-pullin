@@ -35,10 +35,10 @@ MATLAB, and **no training dataset anywhere**.
 **Click a badge to open that notebook in Google Colab, then choose
 `Runtime → Run all`.** Nothing to install, no licence, no GPU, no dataset.
 
-| Notebook | | Runtime | What it does |
-|---|---|---|---|
-| **1. Main results** — start here | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/thetushardudeja1/mems-differentiable-pullin/blob/main/notebooks/MEMS_differentiable_pullin.ipynb) | **~4 min** | The evidence: validation against all eight published sources, the exponent reversal, and the inverse design — all computed live |
-| **2. Method deep dive** — optional | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/thetushardudeja1/mems-differentiable-pullin/blob/main/notebooks/method_deep_dive.ipynb) | **~3 min** | The parts the 3-page report had no room for: shape sensitivity, design without optimisation, adaptive control |
+| Notebook | Launch | What it does |
+|---|:---:|---|
+| **1. Main results** — start here | <a href="https://colab.research.google.com/github/thetushardudeja1/mems-differentiable-pullin/blob/main/notebooks/MEMS_differentiable_pullin.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" height="36" alt="Open In Colab"></a> | The evidence: validation against all eight published sources, the exponent reversal, and the inverse design — all computed live |
+| **2. Method deep dive** — optional | <a href="https://colab.research.google.com/github/thetushardudeja1/mems-differentiable-pullin/blob/main/notebooks/method_deep_dive.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" height="36" alt="Open In Colab"></a> | The parts the 3-page report had no room for: shape sensitivity, design without optimisation, adaptive control |
 
 *(A badge is a link — clicking it loads that notebook straight into Colab. You
 do not need to clone anything; each notebook clones this repository in its first
