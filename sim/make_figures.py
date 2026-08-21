@@ -193,15 +193,17 @@ def figure2():
                lw=1.3)
     b.axhline(ref - best, color=C_GREY, ls="--", lw=0.9)
     b.plot(0.6, max(v0 - best, FLOOR), "*", color=C_GREEN, ms=8, zorder=6)
-    b.text(0.96, 0.97, "cold start", transform=b.transAxes, fontsize=7.4,
+    # Four labels in a 1.5 in panel. The previous set overlapped each other and
+    # the y-axis: "converged direct (13.66 V)" alone was 26 characters, wider
+    # than the axes. Labels are short now and the value moves to the caption.
+    b.text(0.94, 0.97, "cold start", transform=b.transAxes, fontsize=7.0,
            color=C_ALT, ha="right", va="top", fontweight="bold")
-    b.text(0.96, 0.47, f"converged direct ({ref:.2f} V)", transform=b.transAxes,
-           fontsize=7.4, color=C_GREY, ha="right", va="bottom")
-    b.text(0.96, 0.21, "from network", transform=b.transAxes, fontsize=7.4,
+    b.text(0.06, 0.55, "direct", transform=b.transAxes,
+           fontsize=7.0, color=C_GREY, ha="left", va="bottom")
+    b.text(0.94, 0.20, "warm start", transform=b.transAxes, fontsize=7.0,
            color=C_OURS, ha="right", va="top", fontweight="bold")
-    b.text(0.06, 0.36, "network\nalone", transform=b.transAxes, fontsize=7.4,
-           color=C_GREEN, ha="left", va="top", fontweight="bold",
-           linespacing=1.1)
+    b.text(0.06, 0.30, "network", transform=b.transAxes, fontsize=7.0,
+           color=C_GREEN, ha="left", va="top", fontweight="bold")
     b.set_xlabel("Solver steps", labelpad=1.2, fontsize=7.3)
     b.set_ylabel(r"$V_{\rm PI}$ above best [V]", labelpad=1.2, fontsize=7.3)
     b.set_xlim(-6, 200)
@@ -296,8 +298,10 @@ def figure4():
     b.annotate(f"{100*(1-v[6]/v0):.1f}% (ours)", (68, v[6] / v0),
                textcoords="offset points", xytext=(4, 10), fontsize=7.4,
                color=C_OURS)
+    # Offset upward, not downward: at (-62,-12) this label sat on top of the
+    # x-axis title and the two collided.
     b.annotate("16.0% (measured)", (68, n["meas_v"][1] / n["meas_v"][0]),
-               textcoords="offset points", xytext=(-62, -12), fontsize=7.4,
+               textcoords="offset points", xytext=(-70, 6), fontsize=7.4,
                color=C_REF)
     b.set_xlabel("Bottom-electrode length ratio  [%]")
     b.set_ylabel(r"$V_{\rm PI}$ normalised to 35% device")
@@ -318,25 +322,33 @@ def figure5():
     fig, (a, b) = plt.subplots(1, 2, figsize=(COL1, 1.62))
     fig.subplots_adjust(wspace=0.56)
 
-    a.plot(T, v_ff, "-", color=C_GREEN, lw=1.4, label="feed-forward")
-    a.plot(T, v_en, "--", color=C_OURS, lw=1.2, label="+ constr. layer")
+    # A legend box does not fit a 1.6 in panel -- it overflowed the axes frame.
+    # The two curves also lie on top of each other, which is itself the result:
+    # the constraint layer costs essentially nothing in drive voltage. So they
+    # are labelled in place and the caption states the finding.
+    a.plot(T, v_ff, "-", color=C_GREEN, lw=1.6)
+    a.plot(T, v_en, "--", color=C_OURS, lw=1.2)
     a.set_xlabel(r"Travel spec  [$\mu$m]", labelpad=1.2, fontsize=7.3)
     a.set_ylabel(r"$V_{\rm PI}$  [V]", labelpad=1.2, fontsize=7.3)
     a.tick_params(labelsize=7.4)
-    a.legend(loc="upper left", handlelength=1.1, fontsize=7.4,
-             labelspacing=0.2, borderpad=0.15)
+    a.text(0.04, 0.96, "both modes", transform=a.transAxes, fontsize=7.0,
+           color=C_GREY, ha="left", va="top")
+    a.text(0.04, 0.84, "coincide", transform=a.transAxes, fontsize=7.0,
+           color=C_GREY, ha="left", va="top")
     panel_label(a, "(a)", dx=-0.30, dy=1.04)
 
     err = 100.0 * np.abs(tr - T) / T
     b.plot(T, err, "o-", color=C_GREEN, ms=2.4, mfc="white", mew=0.9)
     b.axhline(5.0, color=C_ALT, ls="--", lw=1.1)
     b.axhline(np.mean(err), color=C_GREY, ls=":", lw=1.0)
-    # labelled in place; a legend box here covered the error curve itself
-    b.text(0.96, 0.93, "soft penalty", transform=b.transAxes, fontsize=7.4,
-           color=C_ALT, ha="right", va="top", fontweight="bold")
-    b.text(0.96, 0.20, f"hard layer, mean {np.mean(err):.2f}%",
-           transform=b.transAxes, fontsize=7.4, color="#00715A", ha="right",
-           va="top", fontweight="bold")
+    # Labelled in place -- a legend box covered the error curve. Text is kept
+    # short and left-anchored: the previous right-anchored string was wider
+    # than the panel and was clipped at the frame.
+    b.text(0.05, 0.95, "soft penalty", transform=b.transAxes, fontsize=7.2,
+           color=C_ALT, ha="left", va="top", fontweight="bold")
+    b.text(0.05, 0.28, f"ours: {np.mean(err):.2f}%", transform=b.transAxes,
+           fontsize=7.2, color="#00715A", ha="left", va="top",
+           fontweight="bold")
     b.set_xlabel(r"Travel spec  [$\mu$m]", labelpad=1.2, fontsize=7.3)
     b.set_ylabel("Spec error  [%]", labelpad=1.2, fontsize=7.3)
     b.set_ylim(0, 6.2)
