@@ -427,7 +427,7 @@ python inverse_design.py          # free-form design, both BCs ~15 min
 | `notebooks/MEMS_differentiable_pullin.ipynb` | Validation and results: eight published sources, the reversal, inverse design |
 | `sim/make_arch.py` | System architecture diagram (Fig. 0) |
 | `papers/README.md` | Reference library index (what each paper is used for) |
-| `submission/` | ISMC 2026 deliverables |
+| `submission/` | The four deliverable PDFs: pitch, report, results & validation, code & data |
 
 **Environment.** Python 3.11, JAX 0.10.2, NumPy, Matplotlib; pinned in
 `environment.yml`. Developed on WSL2 (Ubuntu) with an RTX 4060.
