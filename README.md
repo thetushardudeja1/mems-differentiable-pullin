@@ -30,14 +30,24 @@ bifurcation itself**, rather than differentiating a forward solve or fitting a
 surrogate to ~10⁴ archived simulations. No COMSOL, no ANSYS, no MATLAB, and
 **no training dataset anywhere**.
 
-## See it in 90 seconds
+## Run it yourself — no install, no licence, no GPU
 
-[`sim/demo.ipynb`](sim/demo.ipynb) runs end to end on a laptop CPU with its
-outputs already stored, so you can read it without running it. It sizes the
-baseline device (22.864 V), shows that pull-in is a fold, verifies the exact
-gradient against the analytic `c³` law to **0.000000%**, and then drives
-**22.86 → 14.04 V** in 150 gradient steps while holding the travel
-specification pinned at 2.0000 µm.
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/thetushardudeja1/mems-differentiable-pullin/blob/main/notebooks/MEMS_differentiable_pullin.ipynb)
+
+<!-- The badge URL embeds the repository path. If this is pushed under a
+     different owner or name, update BOTH this link and REPO_URL in the
+     notebook's setup cell, or the clone will fail in Colab. -->
+
+[`notebooks/MEMS_differentiable_pullin.ipynb`](notebooks/MEMS_differentiable_pullin.ipynb)
+executes in **about four minutes on a CPU** and reproduces, live: the baseline
+device at 22.864 V; the exact gradient checked against an analytic identity to
+**0.000000%**; all five validation scripts against the eight sources; the
+**optimal-exponent reversal in both geometries**; and the **22.86 → 14.04 V**
+inverse-design descent with travel pinned at 2.0000 µm.
+
+Outputs are stored in the file, so it can also simply be read. The three long
+experiments — amortized network (26 min), RL policy (10 min), surrogate
+baselines (10 min) — are shown precomputed with the command to reproduce each.
 
 ---
 
@@ -67,7 +77,7 @@ conda env create -f environment.yml
 conda activate mems
 cd sim
 
-jupyter lab demo.ipynb       # 90-second interactive demo, CPU only
+jupyter lab ../notebooks/MEMS_differentiable_pullin.ipynb   # ~4 min, CPU only
 
 python test_fold.py          # solver + exact-gradient validation
 python validate_beam.py      # distributed beam vs. literature
@@ -96,7 +106,7 @@ python make_figures.py && python make_tables.py && python make_arch.py
 | `sim/env2dof.py`, `train_rl2dof.py` | 2-DOF RL environment and policy |
 | `sim/surrogate_fair.py`, `fno_surrogate.py` | MLP / FNO surrogate baselines |
 | `sim/model2dof.py` | Classical charge-control baseline |
-| `sim/demo.ipynb` | 90-second interactive demo (outputs included) |
+| `notebooks/MEMS_differentiable_pullin.ipynb` | Colab notebook; every fast experiment live (outputs included) |
 | `sim/make_arch.py` | System architecture diagram (Fig. 0) |
 | `papers/README.md` | Reference library index (what each paper is used for) |
 

@@ -15,19 +15,21 @@ stays selectable and searchable in the compiled report.
 import os
 import sys
 
-SRC = "../figures/Fig0_architecture.svg"
-OUT_PDF = "../figures/Fig0_architecture.pdf"
-OUT_PNG = "../figures/Fig0_architecture.png"
-
-# IEEE double-column width. The SVG viewBox is 972 units wide -- 940 of content
-# plus a 16-unit margin on each side -- and that is the scale the font sizes in
-# it were budgeted against (15 units -> ~8 pt).
-WIDTH_IN = 7.16
-VIEWBOX_W = 972
-
+# Each entry: (svg, stem, target width in inches).
 # cairosvg's output_width is in CSS pixels at 96 dpi, NOT points. Passing
 # inches*72 silently produced a 5.37 in PDF instead of 7.16 in.
-WIDTH_PX = WIDTH_IN * 96.0
+#
+# Three variants exist because one drawing cannot serve all three slots at a
+# legible type size:
+#   Fig0        7.16 in  double column, the full diagram
+#   Fig0b       6.90 in  wide strip for the one-page pitch header
+#   Fig0c       3.50 in  IEEE SINGLE column, for the technical report, whose
+#                        3-page limit cannot afford a full-width float
+FIGS = [
+    ("../figures/Fig0_architecture.svg",       "Fig0_architecture",       7.16),
+    ("../figures/Fig0b_pitch_strip.svg",       "Fig0b_pitch_strip",       6.90),
+    ("../figures/Fig0c_architecture_1col.svg", "Fig0c_architecture_1col", 3.50),
+]
 
 def main():
     try:
@@ -37,23 +39,21 @@ def main():
                  "(alternatively: rsvg-convert or inkscape on the SVG in "
                  "figures/)")
 
-    if not os.path.exists(SRC):
-        sys.exit(f"missing {SRC}")
-
-    cairosvg.svg2pdf(url=SRC, write_to=OUT_PDF, output_width=WIDTH_PX)
-    cairosvg.svg2png(url=SRC, write_to=OUT_PNG, output_width=VIEWBOX_W * 2)
-
-    for f in (OUT_PDF, OUT_PNG):
-        print(f"  wrote {f}  ({os.path.getsize(f) / 1024:.0f} kB)")
-
-    try:
-        from pypdf import PdfReader
-        b = PdfReader(OUT_PDF).pages[0].mediabox
-        print(f"  PDF page: {float(b.width)/72:.2f} x "
-              f"{float(b.height)/72:.2f} in  (IEEE double column = "
-              f"{WIDTH_IN} in)")
-    except ImportError:
-        pass
+    for src, stem, width_in in FIGS:
+        if not os.path.exists(src):
+            print(f"  SKIP {src} (missing)")
+            continue
+        pdf = f"../figures/{stem}.pdf"
+        png = f"../figures/{stem}.png"
+        cairosvg.svg2pdf(url=src, write_to=pdf, output_width=width_in * 96.0)
+        cairosvg.svg2png(url=src, write_to=png, output_width=1900)
+        try:
+            from pypdf import PdfReader
+            b = PdfReader(pdf).pages[0].mediabox
+            print(f"  {stem}: {float(b.width)/72:.2f} x "
+                  f"{float(b.height)/72:.2f} in  (target {width_in} in)")
+        except ImportError:
+            print(f"  wrote {pdf}")
 
 
 if __name__ == "__main__":

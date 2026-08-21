@@ -11,8 +11,13 @@ STYLE RULES ENFORCED HERE
     panels are reduced when placed side by side.
   * Ticks inward on all four sides, minor ticks on.
 
-  Fig. 1 (double column, 3 panels) -- solver validation and inverse design
-  Fig. 2 (double column, 3 panels) -- AI-driven design and control
+  Fig. 1 (SINGLE column, 3 panels) -- solver validation and inverse design
+  Fig. 2 (SINGLE column, 2 panels) -- AI-driven design and control
+
+Figs. 1 and 2 are single-column on purpose. A figure* blocks the full page
+width; a single-column figure blocks one column and lets text flow past it,
+which is what a hard 3-page limit needs. Only Fig. 0 (the architecture
+diagram) and Table III stay full width, because neither is legible narrower.
 
 Rebuilds entirely from saved .npz/.npy; no experiment is re-run.
 """
@@ -58,8 +63,10 @@ C_GREY = "#8C8C8C"
 C_GREEN = "#009E73"
 
 
-def panel_label(ax, s):
-    ax.text(-0.20, 1.06, s, transform=ax.transAxes,
+def panel_label(ax, s, dx=-0.20, dy=1.06):
+    # dx/dy are overridable because in the single-column stacked layouts the
+    # default position lands on top of a tall y-axis label.
+    ax.text(dx, dy, s, transform=ax.transAxes,
             fontsize=9, fontweight="bold", va="bottom", ha="left")
 
 
@@ -72,24 +79,32 @@ def save(fig, name):
 
 # ============================== FIGURE 1 ====================================
 def figure1():
-    fig, axes = plt.subplots(1, 3, figsize=(COL2, 2.15))
-    a, b, c = axes
+    """SINGLE COLUMN. A figure* blocks the whole page width; a single-column
+    figure blocks one column and lets text flow past it, which is what the
+    3-page limit needs. Panel (a) spans the column, (b) and (c) share the row
+    below it -- the EDL/TED convention of grouping panels inside one column."""
+    fig = plt.figure(figsize=(COL1, 2.40))
+    gs = fig.add_gridspec(2, 2, height_ratios=[1.0, 0.92],
+                          hspace=0.62, wspace=0.42)
+    a = fig.add_subplot(gs[0, :])
+    b = fig.add_subplot(gs[1, 0])
+    c = fig.add_subplot(gs[1, 1])
 
     # ---- (a) gap profiles -------------------------------------------------
     xi = np.load("xi_opt.npy")
-    a.plot(xi, np.load("D_poly_best.npy"), "-", color=C_REF, lw=1.9,
-           label="Haluzan et al. 2010\n(hand-tuned, $n{=}4/3$)")
-    a.plot(xi, np.load("D_opt.npy"), "--", color=C_OURS, lw=1.7,
-           label="This work: free-form\n(start: Haluzan design)")
-    a.plot(xi, np.load("D_ctrl.npy"), ":", color=C_ALT, lw=1.9,
-           label="This work: free-form\n(start: uniform gap)")
-    a.set_xlabel(r"Normalised position $x/l$")
-    a.set_ylabel(r"Electrode gap $d(x)$  [$\mu$m]")
+    a.plot(xi, np.load("D_poly_best.npy"), "-", color=C_REF, lw=1.7,
+           label="Haluzan et al. 2010 (hand-tuned, $n{=}4/3$)")
+    a.plot(xi, np.load("D_opt.npy"), "--", color=C_OURS, lw=1.6,
+           label="This work (start: Haluzan design)")
+    a.plot(xi, np.load("D_ctrl.npy"), ":", color=C_ALT, lw=1.8,
+           label="This work (start: uniform gap)")
+    a.set_xlabel(r"Normalised position $x/l$", labelpad=1.5)
+    a.set_ylabel(r"Gap $d(x)$  [$\mu$m]", labelpad=1.5)
     a.set_xlim(0, 1)
-    a.set_ylim(0.5, 6.2)
-    a.legend(loc="upper left", handlelength=1.7, labelspacing=0.35,
-             borderpad=0.2)
-    panel_label(a, "(a)")
+    a.set_ylim(0.5, 7.6)
+    a.legend(loc="upper left", handlelength=1.5, labelspacing=0.22,
+             borderpad=0.15, fontsize=7.4)
+    panel_label(a, "(a)", dx=-0.155, dy=1.10)
 
     # ---- (b),(c) trend reversal ------------------------------------------
     d = np.load("figdata_f2.npz")
@@ -98,46 +113,55 @@ def figure1():
                          (c, "fixed_fixed", "Fixed–fixed")]:
         n, v = d[f"{pre}_n"], d[f"{pre}_v"]
         ok = np.isfinite(v)
-        ax.plot(n[ok], v[ok], "o-", color=C_OURS, ms=3.6, mfc="white",
-                mew=1.3, label="This work")
+        ax.plot(n[ok], v[ok], "o-", color=C_OURS, ms=2.8, mfc="white", mew=1.1)
         i = int(np.nanargmin(v))
-        ax.plot(n[i], v[i], "*", color=C_ALT, ms=11, zorder=6,
-                label=f"Optimum $n^*={n[i]:.2f}$")
-        ax.set_xlabel(r"Gap-profile exponent $n$")
-        ax.set_title(ttl, pad=3)
-        ax.legend(loc="upper center", handlelength=1.4)
-        # pad the x-range so a marker sitting at an end point is not clipped
+        ax.plot(n[i], v[i], "*", color=C_ALT, ms=9, zorder=6)
+        # optimum stated as text, not a legend entry: at 1.5 in wide a legend
+        # box covers the curve it is describing.
+        ax.set_title(f"{ttl}, $n^*\\!=\\!{n[i]:.2f}$", pad=2.5, fontsize=8.0)
+        ax.set_xlabel(r"Exponent $n$", labelpad=1.5)
+        ax.tick_params(labelsize=7.4)
         span = n[ok].max() - n[ok].min()
         ax.set_xlim(n[ok].min() - 0.06 * span, n[ok].max() + 0.06 * span)
         vspan = np.nanmax(v) - np.nanmin(v)
-        ax.set_ylim(np.nanmin(v) - 0.10 * vspan, np.nanmax(v) + 0.22 * vspan)
-    b.set_ylabel(r"Pull-in voltage $V_{\rm PI}$  [V]")
-    c.set_ylabel(r"Pull-in voltage $V_{\rm PI}$  [V]")
+        ax.set_ylim(np.nanmin(v) - 0.12 * vspan, np.nanmax(v) + 0.12 * vspan)
+    b.set_ylabel(r"$V_{\rm PI}$  [V]", labelpad=1.5)
+    c.set_ylabel(r"$V_{\rm PI}$  [V]", labelpad=1.5)
     panel_label(b, "(b)")
     panel_label(c, "(c)")
 
-    fig.tight_layout(pad=0.35, w_pad=1.5)
     save(fig, "Fig1_solver_and_inverse_design")
 
 
 # ============================== FIGURE 2 ====================================
 def figure2():
-    fig, axes = plt.subplots(1, 3, figsize=(COL2, 2.15))
-    a, b, c = axes
+    """SINGLE COLUMN, two panels. The old panel (c) -- the equal-budget bar
+    chart -- is gone: Table III now carries every one of those numbers as rows,
+    and repeating them cost a third of a page against a hard 3-page limit."""
+    fig, (a, b) = plt.subplots(1, 2, figsize=(COL1, 1.62))
+    fig.subplots_adjust(wspace=0.52)
 
     # ---- (a) RL adaptivity ------------------------------------------------
     d = np.load("figdata_f3.npz")
     r, rl, fx = d["r_ti"], d["rl"], d["fixed"]
-    a.plot(r, r, "-", color=C_GREY, lw=1.2,
-           label="Device tip-in ceiling")
-    a.plot(r, rl, ".", color=C_OURS, ms=2.6, alpha=0.75,
-           label=f"RL policy ($\\rho={np.corrcoef(r, rl)[0,1]:+.2f}$)")
-    a.plot(r, fx, ".", color=C_ALT, ms=2.6, alpha=0.75,
-           label=f"Fixed gain ($\\rho={np.corrcoef(r, fx)[0,1]:+.2f}$)")
-    a.set_xlabel(r"Fabrication ceiling $r_{\rm ti}$ (unmeasurable)")
-    a.set_ylabel(r"Achieved travel  [gap fraction]")
-    a.legend(loc="upper left", handlelength=1.4, labelspacing=0.3)
-    panel_label(a, "(a)")
+    rho_rl = np.corrcoef(r, rl)[0, 1]
+    rho_fx = np.corrcoef(r, fx)[0, 1]
+    a.plot(r, r, "-", color=C_GREY, lw=1.0)
+    a.plot(r, rl, ".", color=C_OURS, ms=1.8, alpha=0.8)
+    a.plot(r, fx, ".", color=C_ALT, ms=1.8, alpha=0.8)
+    # Curves labelled in place. At 1.5 in wide a legend box covers the data it
+    # is describing, so the rho values sit next to their own point clouds.
+    a.text(0.97, 0.97, "device ceiling", transform=a.transAxes, fontsize=7.4,
+           color=C_GREY, ha="right", va="top")
+    a.text(0.97, 0.50, f"RL  $\\rho={rho_rl:+.2f}$", transform=a.transAxes,
+           fontsize=7.4, color=C_OURS, ha="right", va="top", fontweight="bold")
+    a.text(0.97, 0.15, f"fixed  $\\rho={rho_fx:+.2f}$", transform=a.transAxes,
+           fontsize=7.4, color=C_ALT, ha="right", va="top", fontweight="bold")
+    a.set_xlabel(r"Ceiling $r_{\rm ti}$ (unmeasurable)", labelpad=1.2,
+                 fontsize=7.3)
+    a.set_ylabel("Achieved travel", labelpad=1.2, fontsize=7.3)
+    a.tick_params(labelsize=7.4)
+    panel_label(a, "(a)", dx=-0.30, dy=1.04)
 
     # ---- (b) warm start ---------------------------------------------------
     d = np.load("figdata_f4.npz")
@@ -152,84 +176,70 @@ def figure2():
     best = float(min(np.nanmin(net), np.nanmin(cold[1:]), v0))
     FLOOR = 1.2e-2          # keep converged curves visible on the log axis
     b.semilogy(s[1:], np.maximum(cold[1:] - best, FLOOR), "-", color=C_ALT,
-               lw=1.7, label="From uniform gap")
+               lw=1.3)
     b.semilogy(s[1:], np.maximum(net[1:] - best, FLOOR), "-", color=C_OURS,
-               lw=1.7, label="From network output")
-    b.axhline(ref - best, color=C_GREY, ls="--", lw=1.1,
-              label=f"Converged direct ({ref:.2f} V)")
-    b.plot(0.6, max(v0 - best, FLOOR), "*", color=C_GREEN, ms=12, zorder=6)
-    b.annotate("Network alone\n(0.04 ms)", (0.6, max(v0 - best, FLOOR)),
-               textcoords="offset points", xytext=(12, 4), fontsize=6.2,
-               color=C_GREEN, fontweight="bold")
-    b.set_xlabel("Physics-solver optimisation steps")
-    b.set_ylabel(r"$V_{\rm PI}$ above best design found  [V]")
+               lw=1.3)
+    b.axhline(ref - best, color=C_GREY, ls="--", lw=0.9)
+    b.plot(0.6, max(v0 - best, FLOOR), "*", color=C_GREEN, ms=8, zorder=6)
+    b.text(0.96, 0.97, "cold start", transform=b.transAxes, fontsize=7.4,
+           color=C_ALT, ha="right", va="top", fontweight="bold")
+    b.text(0.96, 0.47, f"converged direct ({ref:.2f} V)", transform=b.transAxes,
+           fontsize=7.4, color=C_GREY, ha="right", va="bottom")
+    b.text(0.96, 0.21, "from network", transform=b.transAxes, fontsize=7.4,
+           color=C_OURS, ha="right", va="top", fontweight="bold")
+    b.text(0.06, 0.36, "network\nalone", transform=b.transAxes, fontsize=7.4,
+           color=C_GREEN, ha="left", va="top", fontweight="bold",
+           linespacing=1.1)
+    b.set_xlabel("Solver steps", labelpad=1.2, fontsize=7.3)
+    b.set_ylabel(r"$V_{\rm PI}$ above best [V]", labelpad=1.2, fontsize=7.3)
     b.set_xlim(-6, 200)
     b.set_ylim(FLOOR * 0.75, 60)
-    # legend OUTSIDE the data region: placed inside, its star marker reads as
-    # a data point (it did, at ~(25, 7)).
-    b.legend(loc="upper center", bbox_to_anchor=(0.5, 1.0), handlelength=1.4,
-             labelspacing=0.25, borderpad=0.15, fontsize=6.2)
-    panel_label(b, "(b)")
+    b.set_xticks([0, 100, 200])
+    b.tick_params(labelsize=7.4)
+    # No legend box: at 1.5 in wide it covered the curves, and its star marker
+    # read as a data point. Curves are labelled in place instead.
+    panel_label(b, "(b)", dx=-0.34, dy=1.04)
 
-    # ---- (c) method comparison -------------------------------------------
-    # measured in surrogate_fair.py / fno_surrogate.py / amortized_hard.py
-    labels = ["MLP surrogate", "FNO surrogate", "Direct (400)",
-              "Direct converged", "Amortized net", "Net + 100 steps"]
-    vals = [17.203, 14.245, 13.783, 13.665, 13.636, 13.599]
-    cols = [C_ALT, C_ALT, C_OURS, C_OURS, C_GREEN, C_GREEN]
-    y = np.arange(len(vals))[::-1]
-    c.barh(y, np.array(vals) - 13.0, left=13.0, color=cols, height=0.66,
-           edgecolor="black", lw=0.6)
-    # value labels outside the bar end, with x-range padded so none is clipped
-    for yi, v in zip(y, vals):
-        c.text(v + 0.10, yi, f"{v:.2f}", va="center", fontsize=6.4)
-    c.axvline(14.14, color=C_REF, ls="--", lw=1.2, zorder=5)
-    # Reference label sits ABOVE the top bar. Placing it below or rotating it
-    # along the line put it on top of the "Net + 100 steps" bar and its value.
-    c.text(14.14, len(vals) - 0.28, "Haluzan et al. 14.14 V", fontsize=6.2,
-           ha="center", va="bottom", color=C_REF)
-    c.set_yticks(y)
-    c.set_yticklabels(labels, fontsize=6.6)
-    c.set_xlabel(r"Pull-in voltage $V_{\rm PI}$  [V]")
-    c.set_xlim(13.0, 19.4)
-    c.set_ylim(-0.62, len(vals) + 0.32)
-    c.set_title("Equal budget: 400 solves", pad=3)
-    panel_label(c, "(c)")
-
-    fig.tight_layout(pad=0.35, w_pad=1.6)
     save(fig, "Fig2_ai_design_and_control")
 
 
 # ============================== FIGURE 3 ====================================
 def figure3():
     """The saddle-node fold that defines pull-in, and the mode at that point."""
+    # SINGLE COLUMN. Sized at COL1 rather than scaled down from COL2 in LaTeX:
+    # \includegraphics shrinks the type along with the axes, and at 3.5 in a
+    # COL2 figure's 8 pt labels land at ~5.8 pt.
     d = np.load("figdata_fold.npz")
-    fig, (a, b) = plt.subplots(1, 2, figsize=(COL2 * 0.68, 2.15))
+    fig, (a, b) = plt.subplots(1, 2, figsize=(COL1, 1.62))
+    fig.subplots_adjust(wspace=0.54)
 
     for tag, name, col in [("cant", "Cantilever", C_OURS),
                            ("ff", "Fixed–fixed", C_ALT)]:
         s, lam = d[f"{tag}_s"], d[f"{tag}_lam"]
         dfold, lfold = d[f"{tag}_fold"]
         ok = np.isfinite(lam)
-        a.plot(s[ok], lam[ok] / lfold, "-", color=col, label=name)
-        a.plot(dfold / s.max() * s.max(), 1.0, "*", color=col, ms=12, zorder=6)
-        b.plot(d[f"{tag}_xi"], d[f"{tag}_Y_uniform"], "-", color=col,
+        a.plot(s[ok], lam[ok] / lfold, "-", color=col, lw=1.3, label=name)
+        a.plot(dfold / s.max() * s.max(), 1.0, "*", color=col, ms=8, zorder=6)
+        b.plot(d[f"{tag}_xi"], d[f"{tag}_Y_uniform"], "-", color=col, lw=1.3,
                label=name)
-    a.axhline(1.0, color=C_GREY, ls=":", lw=1.0)
-    a.text(0.03, 1.02, "pull-in (fold)", fontsize=6.4, color=C_GREY)
-    a.set_xlabel(r"Controlled deflection $\delta / d_0$")
-    a.set_ylabel(r"Normalised load $\Lambda / \Lambda_{\rm PI}$")
-    a.set_ylim(0, 1.18)
-    a.legend(loc="lower center", handlelength=1.4)
-    panel_label(a, "(a)")
+    a.axhline(1.0, color=C_GREY, ls=":", lw=0.9)
+    a.text(0.03, 1.03, "pull-in (fold)", fontsize=7.4, color=C_GREY)
+    a.set_xlabel(r"Deflection $\delta / d_0$", labelpad=1.2, fontsize=7.3)
+    a.set_ylabel(r"$\Lambda / \Lambda_{\rm PI}$", labelpad=1.2, fontsize=7.3)
+    a.set_ylim(0, 1.20)
+    a.tick_params(labelsize=7.4)
+    a.legend(loc="lower center", handlelength=1.1, fontsize=7.4,
+             labelspacing=0.2, borderpad=0.15)
+    panel_label(a, "(a)", dx=-0.30, dy=1.04)
 
-    b.set_xlabel(r"Normalised position $x/l$")
-    b.set_ylabel(r"Deflection at pull-in $y/d_0$")
+    b.set_xlabel(r"Position $x/l$", labelpad=1.2, fontsize=7.3)
+    b.set_ylabel(r"$y/d_0$ at pull-in", labelpad=1.2, fontsize=7.3)
     b.set_xlim(0, 1)
-    b.legend(loc="upper left", handlelength=1.4)
-    panel_label(b, "(b)")
+    b.tick_params(labelsize=7.4)
+    b.legend(loc="upper left", handlelength=1.1, fontsize=7.4,
+             labelspacing=0.2, borderpad=0.15)
+    panel_label(b, "(b)", dx=-0.30, dy=1.04)
 
-    fig.tight_layout(pad=0.35, w_pad=1.5)
     save(fig, "Fig3_fold_structure")
 
 
@@ -247,15 +257,15 @@ def figure4():
     for yi, e in zip(y, err):
         # 2-dp rounding printed the 0.001% lumped check as "0.00%"
         txt = "<0.01%" if e < 0.01 else f"{e:.2f}%"
-        a.text(max(e, 0.004) * 1.25, yi, txt, va="center", fontsize=6.2)
+        a.text(max(e, 0.004) * 1.25, yi, txt, va="center", fontsize=7.3)
     a.set_xscale("log")
     a.set_yticks(y)
     # strip LaTeX escaping: matplotlib mathtext renders "\#" literally
-    a.set_yticklabels([s.replace(r"\#", "#") for s in lab], fontsize=6.4)
+    a.set_yticklabels([s.replace(r"\#", "#") for s in lab], fontsize=7.4)
     a.set_xlim(3e-3, 40)
     a.set_xlabel("Relative error vs. literature  [%]")
     a.set_title("Solver validation", pad=3)
-    panel_label(a, "(a)")
+    panel_label(a, "(a)", dx=-0.155, dy=1.10)
 
     # NORMALISED to the 35% device. Absolute voltages are offset (~+85%) by
     # anchor compliance that neither model captures -- our 1D beam assumes
@@ -272,10 +282,10 @@ def figure4():
            ms=5.5, label="Nazemi et al. 2025\n(measured)")
     # matplotlib mathtext is not usetex here, so "\%" would print literally
     b.annotate(f"{100*(1-v[6]/v0):.1f}% (ours)", (68, v[6] / v0),
-               textcoords="offset points", xytext=(4, 10), fontsize=6.2,
+               textcoords="offset points", xytext=(4, 10), fontsize=7.4,
                color=C_OURS)
     b.annotate("16.0% (measured)", (68, n["meas_v"][1] / n["meas_v"][0]),
-               textcoords="offset points", xytext=(-62, -12), fontsize=6.2,
+               textcoords="offset points", xytext=(-62, -12), fontsize=7.4,
                color=C_REF)
     b.set_xlabel("Bottom-electrode length ratio  [%]")
     b.set_ylabel(r"$V_{\rm PI}$ normalised to 35% device")
@@ -290,34 +300,37 @@ def figure4():
 # ============================== FIGURE 5 ====================================
 def figure5():
     """Amortized network across the entire specification range."""
+    # SINGLE COLUMN, sized at COL1 for the same reason as figure3().
     d = np.load("figdata_amort.npz")
     T, v_ff, v_en, tr = d["T"], d["v_ff"], d["v_en"], d["tr_ff"]
-    fig, (a, b) = plt.subplots(1, 2, figsize=(COL2 * 0.68, 2.15))
+    fig, (a, b) = plt.subplots(1, 2, figsize=(COL1, 1.62))
+    fig.subplots_adjust(wspace=0.56)
 
-    a.plot(T, v_ff, "-", color=C_GREEN, lw=1.8,
-           label="Feed-forward (0.04 ms)")
-    a.plot(T, v_en, "--", color=C_OURS, lw=1.5,
-           label="+ constraint layer")
-    a.set_xlabel(r"Required travel specification  [$\mu$m]")
-    a.set_ylabel(r"Pull-in voltage $V_{\rm PI}$  [V]")
-    a.legend(loc="upper left", handlelength=1.5)
-    panel_label(a, "(a)")
+    a.plot(T, v_ff, "-", color=C_GREEN, lw=1.4, label="feed-forward")
+    a.plot(T, v_en, "--", color=C_OURS, lw=1.2, label="+ constr. layer")
+    a.set_xlabel(r"Travel spec  [$\mu$m]", labelpad=1.2, fontsize=7.3)
+    a.set_ylabel(r"$V_{\rm PI}$  [V]", labelpad=1.2, fontsize=7.3)
+    a.tick_params(labelsize=7.4)
+    a.legend(loc="upper left", handlelength=1.1, fontsize=7.4,
+             labelspacing=0.2, borderpad=0.15)
+    panel_label(a, "(a)", dx=-0.30, dy=1.04)
 
     err = 100.0 * np.abs(tr - T) / T
-    b.plot(T, err, "o-", color=C_GREEN, ms=3.4, mfc="white", mew=1.2,
-           label="Hard constraint layer")
-    b.axhline(5.0, color=C_ALT, ls="--", lw=1.3,
-              label="Soft penalty (previous)")
-    b.axhline(np.mean(err), color=C_GREY, ls=":", lw=1.1)
-    b.text(2.95, np.mean(err) * 1.35, f"mean {np.mean(err):.2f}%",
-           fontsize=6.2, ha="right", color=C_GREY)
-    b.set_xlabel(r"Required travel specification  [$\mu$m]")
-    b.set_ylabel("Specification error  [%]")
+    b.plot(T, err, "o-", color=C_GREEN, ms=2.4, mfc="white", mew=0.9)
+    b.axhline(5.0, color=C_ALT, ls="--", lw=1.1)
+    b.axhline(np.mean(err), color=C_GREY, ls=":", lw=1.0)
+    # labelled in place; a legend box here covered the error curve itself
+    b.text(0.96, 0.93, "soft penalty", transform=b.transAxes, fontsize=7.4,
+           color=C_ALT, ha="right", va="top", fontweight="bold")
+    b.text(0.96, 0.20, f"hard layer, mean {np.mean(err):.2f}%",
+           transform=b.transAxes, fontsize=7.4, color="#00715A", ha="right",
+           va="top", fontweight="bold")
+    b.set_xlabel(r"Travel spec  [$\mu$m]", labelpad=1.2, fontsize=7.3)
+    b.set_ylabel("Spec error  [%]", labelpad=1.2, fontsize=7.3)
     b.set_ylim(0, 6.2)
-    b.legend(loc="upper center", handlelength=1.5)
-    panel_label(b, "(b)")
+    b.tick_params(labelsize=7.4)
+    panel_label(b, "(b)", dx=-0.30, dy=1.04)
 
-    fig.tight_layout(pad=0.35, w_pad=1.5)
     save(fig, "Fig5_amortized_sweep")
 
 

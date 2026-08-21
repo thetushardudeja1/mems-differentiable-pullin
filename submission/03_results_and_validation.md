@@ -15,11 +15,15 @@ regenerated from a clean checkout. Results that went against us are included.
 | **Design turnaround** | **15 s**, laptop CPU, no licence | FEM campaign over a hand-picked family |
 | **Per-design cost once trained** | **0.04 ms**, spec met to 0.56% | ~30 s of optimization |
 
-**Interactive demo:** `sim/demo.ipynb` runs items 1 and 3 of that table live on
-a laptop CPU in ~90 s, with outputs already stored in the file. It reproduces
-22.864 V for the baseline, verifies the exact gradient against the analytic
-`c³` law to **0.000000%**, and drives 22.86 → 14.04 V in 150 gradient steps
-while holding travel pinned at 2.0000 µm.
+**Interactive notebook:** `notebooks/MEMS_differentiable_pullin.ipynb` — opens
+in Google Colab, no install and no licence. Outputs are stored in the file, so
+it can be read without being run. It executes in **~4 minutes on a CPU** and
+reproduces, live: the 22.864 V baseline; the exact gradient against the
+analytic `c³` identity to **0.000000%**; all five validation scripts against
+the eight sources; the **exponent reversal in both geometries**; and the
+22.86 → 14.04 V descent with travel pinned at 2.0000 µm. The three long
+experiments (amortized network 26 min, RL 10 min, surrogates 10 min) are shown
+precomputed with the command to reproduce each.
 
 ---
 
@@ -148,7 +152,7 @@ ceiling bin, including the most fragile.
 
 ```bash
 conda env create -f environment.yml && conda activate mems && cd sim
-jupyter lab demo.ipynb          # 90 s, laptop CPU, no licence, no GPU
+jupyter lab ../notebooks/MEMS_differentiable_pullin.ipynb          # 90 s, laptop CPU, no licence, no GPU
 python test_fold.py && python validate_beam.py && python model2dof.py
 python validate_nazemi.py && python validate_mtest.py
 python gen_figdata.py && python gen_figdata2.py

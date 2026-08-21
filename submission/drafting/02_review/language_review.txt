@@ -1,0 +1,121 @@
+LANGUAGE REVIEW OF THE FIRST DRAFTS
+Targets: 01_draft/pitch.txt, 01_draft/report.txt
+Goal: sound like an engineer wrote it, read as one continuous argument, and
+survive a reviewer who reads both documents back to back.
+
+
+A. REPEATED CONSTRUCTIONS (counted, not guessed)
+
+  "rather than"                10x   <- the worst offender
+  "which is"                    7x
+  "the same"                    7x
+  "follow(s)"                   5x
+  "Two costs follow"            2x   <- verbatim in BOTH documents
+  "no new material..."          2x   <- verbatim in BOTH documents
+
+"rather than" is a hedge that lets a sentence assert and disclaim at once.
+Ten of them in five pages reads as a machine balancing every clause. Keep at
+most two per document, in the places where the contrast is the actual point
+(the fold vs. approaching it; infeasible vs. costly). Everywhere else, cut the
+disclaimer and let the sentence commit.
+
+
+B. STRUCTURAL TICS
+
+1. Announce-then-enumerate. "Two costs follow." / "The first is voltage." /
+   "The second is travel." Used identically in both documents. A reviewer
+   reading the pitch then the report sees the same scaffolding twice. Keep it
+   once, in the report, where a numbered structure is expected. In the pitch,
+   let the two costs arrive as consequences inside running prose.
+
+2. Negate-then-assert. "Pull-in is not the maximum of a smooth curve. It is a
+   saddle-node bifurcation." This is the single most recognisable LLM cadence.
+   Once is fine and it is genuinely the right move here, because the negation
+   carries real information. It appears in both documents. Keep it in the
+   report only.
+
+3. Tricolons. "silicon area, quiescent power, and one more block that can
+   fail." / "One reverse pass, sixty nodes, no finite differences and no
+   fitted model in between." Three-item lists land well once a page and turn
+   into wallpaper at three a page. Break at least two into a pair or a four.
+
+4. Signposting. "Two entries carry most of the weight." / "One detail earns
+   its place." / "Three things are worth stating plainly." These tell the
+   reader what is coming instead of just delivering it. Delete the announcement
+   and keep the content; the emphasis survives.
+
+5. Summary sentences that restate the previous sentence. "This inverts the
+   standard pipeline." adds nothing after the sentence before it. Cut.
+
+6. Mechanical parallelism. The three capabilities in the pitch are three
+   one-sentence paragraphs of near-identical length and shape. Vary them:
+   the amortized network deserves two sentences, the RL policy one, inverse
+   design a half-line.
+
+
+C. FLOW AND CONNECTION
+
+1. The pitch's NOVELTY section opens by re-asserting what THE AI APPROACH just
+   established ("Nobody differentiates through the MEMS pull-in bifurcation").
+   The reader has just been told. Novelty should advance the argument: what is
+   new is the combination, so open on what exists nearby and where it stops.
+
+2. Pitch PROBLEM ends on the surrogate handicap; AI APPROACH opens on making
+   physics differentiable. That join works. Preserve it, and build the same
+   kind of join everywhere else: end each section on the thing the next one
+   answers.
+
+3. The report's Section 1 currently paraphrases the pitch's PROBLEM almost
+   sentence for sentence. They are read by the same people. The pitch should
+   argue from consequence (cost, yield, area); the report should state the
+   mechanism once, tersely, and move on. No shared sentences.
+
+4. The report has no bridge into Section 3. "Datasets" arrives cold after the
+   methodology. One clause tying it back ("the gradient just described is what
+   removes the need for a dataset") makes the section order feel intentional
+   instead of imposed by the call for papers.
+
+5. Figure references in the report draft are inconsistent with the actual
+   files. Mapping to use: Fig0=architecture, Fig1=inverse design and exponent
+   reversal, Fig2=RL and method comparison, Fig4=validation. In LaTeX use
+   \ref so the numbering cannot drift.
+
+
+D. WORD-LEVEL
+
+  "run into the same wall"      cliche, and mixed with the literal wall of
+                                the electrode. Cut.
+  "the thing that blows up"     vague. Name it: the linear solve is singular.
+  "usable rather than merely
+   correct"                     see (A). "Correct is not enough here" says it.
+  "we say so"                   congratulating ourselves on honesty. Just be
+                                honest and move on.
+  "quiescent power"             good, specific, keep.
+  "a meeting and a simulation
+   queue"                       keep. It is the one line a device engineer
+                                will recognise from their own week.
+  "An agent learns the most
+   from the device it just
+   destroyed."                  keep. Best sentence in either document.
+  "They were right, and now it
+   is a number."                keep.
+
+
+E. WHAT IS ALREADY WORKING, DO NOT SAND IT OFF
+
+  - Admitting the strawman surrogate and what the solver actually returned
+    (-639458). Specific failure numbers read as lab notes, not marketing.
+  - "the surrogate baselines we built to compete against ourselves".
+  - The cube-law check described as the test that would have caught a
+    plausible but wrong adjoint. That sentence is what a reviewer needs.
+  - Naming Haluzan's conjecture and then answering it with two numbers.
+
+  These are the parts that sound like a person did the work. The rewrite must
+  not smooth them into uniform prose.
+
+
+F. ONE CONTENT GAP
+
+The pitch never says what the reader should do with the result. It ends on
+"everything is released". Close on the reader instead: this is a licence-free
+benchmark anyone in the room can run on a laptop this afternoon.

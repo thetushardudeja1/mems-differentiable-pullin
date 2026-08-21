@@ -1,0 +1,25 @@
+
+\begin{table}[t]
+\caption{All methods on one task (cantilever, 2\,\textmu m travel) at an equal
+budget of 400 true solves, scored by the exact solver. Surrogates were given
+active learning, a trust region and feasible restarts. Times exclude the
+network's one-time training (1577\,s, 6000 live solves).}
+\label{tab:budget}
+\centering\scriptsize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Method & Samples & Time & $V_{\rm PI}$ [V] \\
+\midrule
+MLP surrogate $+$ act.\ learning & 400 & 71\,s & 17.20 \\
+FNO surrogate $+$ act.\ learning & 400 & 594\,s & 14.25 \\
+Direct differentiable, 400 solves & \textbf{0} & 15\,s & 13.78 \\
+Direct, 4 restarts & \textbf{0} & 170\,s & 13.67 \\
+Amortized network & \textbf{0} & \textbf{0.04\,ms} & 13.64 \\
+Network $+$ 100 steps & \textbf{0} & 17\,s & \textbf{13.60} \\
+\midrule
+\multicolumn{4}{@{}l@{}}{\scriptsize Hand-tuned design of \cite{haluzan}:
+14.14\,V.} \\
+\bottomrule
+\end{tabular}
+\end{table}

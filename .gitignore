@@ -10,6 +10,8 @@ run_*.log
 # papers are third-party PDFs; not ours to redistribute
 papers/**/*.pdf
 
-# large regenerable artefacts (recreate with sim/gen_figdata*.py)
-sim/*.npz
+# Trained weights are large and regenerable; results arrays are NOT ignored.
+# The .npz/.npy results total ~84 kB and the Colab notebook needs them after a
+# fresh clone, so a reviewer can see the 26-minute and GPU experiments without
+# re-running them. Regenerate with sim/gen_figdata*.py.
 sim/*.pkl

@@ -90,6 +90,18 @@ literature (Sui/Turchetta/Berkenkamp), and it is addressed by neither alone.
 
 ---
 
+## 08-recent-applications — 2024-2026 context and the head-to-head baseline
+
+| file | used for |
+|---|---|
+| `Zhang-2025-MicrosystNanoeng-ML-metastructure-linearization.pdf` | **The baseline our comparison table is built against.** Zhang *et al.*, *Microsyst. Nanoeng.* **11**:214 (2025), DOI 10.1038/s41378-025-01065-4. Open Access (CC BY-NC-ND 4.0). The canonical "standard practice" pipeline: generate a large FEM dataset, fit an MLP surrogate, then inverse-design *through the surrogate*. Verified numbers quoted in our report — **"approximately 48,000 data points were generated and divided equally into three groups of 16,000 each"** (p.6); the MLP runs **"in ~0.01 s per design, in place of a full FEA solve (~22 s per design)"** (p.6); FEA is used "only to generate the training data and to verify final optimized geometries". Devices fabricated via PiezoMUMPs and measured in SEM, giving ~85% linearity improvement. **Different task** (electrothermal linearisation, not pull-in), so we compare methodology, never head-to-head performance. |
+| `Nazemi-2025-microbridge-reduced-pullin-preserved-frequency.pdf` | Measured 2025 microbridge; our normalised $V_{\rm PI}$-reduction validation target. |
+| `AlHadi-2025-SciRep-bifurcation-vacuum-pressure-sensor.pdf` | 2025 bifurcation-based MEMS sensing; confirms fold behaviour is of current interest. |
+| `Persano-2024-pullin-stress-fixed-fixed-RF-MEMS.pdf` | Residual-stress effect on fixed-fixed pull-in. |
+| `LiWang-2026-distributed-static-model-capacitive-MEMS.pdf` | Recent distributed static modelling of capacitive MEMS. |
+
+---
+
 ## Still to obtain
 
 - **Gupta & Senturia 1997**, "Pull-in time dynamics as a measure of absolute

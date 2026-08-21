@@ -12,7 +12,7 @@ against, and the full figure/table generation chain.
 
 | Component | Files |
 |---|---|
-| **Interactive demo (90 s, CPU, outputs included)** | **`sim/demo.ipynb`** |
+| **Interactive notebook — Colab-ready, ~4 min CPU, outputs included** | **`notebooks/MEMS_differentiable_pullin.ipynb`** |
 | Differentiable solver (fold system, exact gradients) | `sim/beam.py` |
 | Lumped dynamic model (GPU-batched) | `sim/pullin.py` |
 | Validation suite | `sim/test_fold.py`, `validate_beam.py`, `validate_nazemi.py`, `validate_mtest.py`, `model2dof.py` |
@@ -39,9 +39,11 @@ reference is used for. **Third-party PDFs are not redistributed** — they are
 excluded via `.gitignore`; the index gives full citations and DOIs so any
 reader can obtain them.
 
-Intermediate arrays behind every figure (`sim/figdata_*.npz`) and trained
-weights (`*.pkl`) are regenerable from a clean checkout and are likewise not
-committed.
+The result arrays behind every figure (`sim/figdata_*.npz`, `sim/*.npy`, 84 kB
+in total) **are committed**, so the interactive notebook can display the three
+long experiments after a fresh clone without re-running them. They are fully
+regenerable with `gen_figdata.py`. Trained weights (`*.pkl`) are larger and are
+not committed; the training scripts recreate them.
 
 ## Reproducing everything
 
@@ -50,8 +52,8 @@ conda env create -f environment.yml
 conda activate mems
 cd sim
 
-# 90-second interactive demo (no licence, no GPU, outputs already stored)
-jupyter lab demo.ipynb
+# interactive notebook: every fast experiment live, ~4 min CPU
+jupyter lab ../notebooks/MEMS_differentiable_pullin.ipynb
 
 # validation (each prints PASS/FAIL against published values)
 python test_fold.py

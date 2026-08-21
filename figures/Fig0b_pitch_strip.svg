@@ -1,0 +1,58 @@
+<!-- Compact variant of Fig0_architecture.svg for the one-page pitch.
+     WHY A SECOND FIGURE: the full diagram is 2.28:1. Scaled small enough to
+     leave room for the pitch text it renders its body type at ~4.5 pt, which
+     is below the legible minimum. This strip is 4.4:1, so at 0.90\textwidth
+     it occupies 1.5 in instead of 2.0 in AND renders body type at ~6 pt.
+     Same palette, same numbers, two facts per capability instead of three.
+     Keep the numbers here identical to Fig0 and to the tables. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-12 -12 1024 234" width="1024" height="234"
+     font-family="DejaVu Sans, Helvetica, Arial, sans-serif">
+  <title>Differentiable pull-in solver: capabilities and outcomes</title>
+
+  <rect x="-12" y="-12" width="1024" height="234" fill="#ffffff"/>
+
+  <!-- ============================ header bar ============================ -->
+  <rect x="0" y="0" width="1000" height="50" rx="5" fill="#1F3B63"/>
+  <text x="500" y="23" font-size="22" font-weight="bold" fill="#ffffff"
+        text-anchor="middle">Differentiable pull-in solver</text>
+  <text x="500" y="41" font-size="13" fill="#AFC3DA" text-anchor="middle">solves the saddle-node bifurcation directly  ·  exact gradients, no surrogate fitting  ·  no training data</text>
+
+  <!-- ========================== capability 1 ========================== -->
+  <rect x="0" y="62" width="324" height="148" rx="5"
+        fill="#EDEEF1" stroke="#D5D8DE" stroke-width="1"/>
+  <rect x="0" y="62" width="324" height="28" rx="5" fill="#1F3B63"/>
+  <text x="162" y="82" font-size="16" font-weight="bold" fill="#ffffff"
+        text-anchor="middle">Inverse design</text>
+  <text x="162" y="126" font-size="24" font-weight="bold" fill="#14213D"
+        text-anchor="middle">22.86 → 13.60 V</text>
+  <text x="162" y="146" font-size="13" fill="#55606E" text-anchor="middle">−41% drive voltage, electrode shape alone</text>
+  <text x="162" y="176" font-size="15" font-weight="bold" fill="#14213D"
+        text-anchor="middle">15 s on a laptop CPU</text>
+  <text x="162" y="195" font-size="13" fill="#55606E" text-anchor="middle">no new mask, no commercial licence</text>
+
+  <!-- ========================== capability 2 ========================== -->
+  <rect x="338" y="62" width="324" height="148" rx="5"
+        fill="#EDEEF1" stroke="#D5D8DE" stroke-width="1"/>
+  <rect x="338" y="62" width="324" height="28" rx="5" fill="#1F3B63"/>
+  <text x="500" y="82" font-size="16" font-weight="bold" fill="#ffffff"
+        text-anchor="middle">Amortized network</text>
+  <text x="500" y="126" font-size="24" font-weight="bold" fill="#14213D"
+        text-anchor="middle">0.04 ms per design</text>
+  <text x="500" y="146" font-size="13" fill="#55606E" text-anchor="middle">spec → geometry, 0 stored simulations</text>
+  <text x="500" y="176" font-size="15" font-weight="bold" fill="#14213D"
+        text-anchor="middle">0.56% spec error</text>
+  <text x="500" y="195" font-size="13" fill="#55606E" text-anchor="middle">hard-constraint layer, not a penalty</text>
+
+  <!-- ========================== capability 3 ========================== -->
+  <rect x="676" y="62" width="324" height="148" rx="5"
+        fill="#EDEEF1" stroke="#D5D8DE" stroke-width="1"/>
+  <rect x="676" y="62" width="324" height="28" rx="5" fill="#1F3B63"/>
+  <text x="838" y="82" font-size="16" font-weight="bold" fill="#ffffff"
+        text-anchor="middle">Safe-operation RL</text>
+  <text x="838" y="126" font-size="24" font-weight="bold" fill="#14213D"
+        text-anchor="middle">+12.8% usable travel</text>
+  <text x="838" y="146" font-size="13" fill="#55606E" text-anchor="middle">0.0% of devices destroyed</text>
+  <text x="838" y="176" font-size="15" font-weight="bold" fill="#14213D"
+        text-anchor="middle">learns each device's ceiling</text>
+  <text x="838" y="195" font-size="13" fill="#55606E" text-anchor="middle">which cannot be measured</text>
+</svg>

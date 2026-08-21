@@ -5,10 +5,14 @@ MEMS Technical Committee.
 
 | # | Requirement | File | Status |
 |---|---|---|---|
-| 1 | One-Page Pitch | `01_one_page_pitch.md` | ready |
-| 2 | Technical Report (max 3 pages) | `02_technical_report.tex` | **needs compiling** |
-| 3 | Results & Validation (+ demo/notebook encouraged) | `03_results_and_validation.md`, `../sim/demo.ipynb` | ready |
-| 4 | Code & Data Availability | `04_code_and_data_statement.md` | ready |
+| 1 | One-Page Pitch | `01_one_page_pitch.tex` → `.pdf` | **1 page, compiled** |
+| 2 | Technical Report (max 3 pages) | `02_technical_report.tex` → `.pdf` | **3 pages, compiled** |
+| 3 | Results & Validation (+ demo/notebook encouraged) | `03_results_and_validation.md`, `../notebooks/MEMS_differentiable_pullin.ipynb` | ready |
+| 4 | Code & Data Availability | `04_code_and_data_statement.md` | **needs the repo URL** |
+
+Both PDFs build with `tectonic <file>.tex` (installed in the `tex` conda env)
+or any pdfLaTeX. Page counts are hard limits and there is no slack in either —
+check with `pypdf` after any edit.
 
 ## Framing (read this before editing any of the four)
 
@@ -129,5 +133,5 @@ contradictory.
 
 **Grid consistency matters.** Every headline voltage is measured at N=60
 (`inverse_design.N_FINAL`). Comparing a design fitted at N=40 against one
-fitted at N=60 once flipped the sign of a conclusion here. `demo.ipynb` uses
+fitted at N=60 once flipped the sign of a conclusion here. The notebook uses
 N=60 for the same reason.
