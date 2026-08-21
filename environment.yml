@@ -13,7 +13,12 @@ dependencies:
       - numpy>=1.26
       - matplotlib>=3.8
       - pypdf>=4.0
-      # demo.ipynb
+      # notebooks/MEMS_differentiable_pullin.ipynb
       - jupyterlab>=4.0
+      # the notebook's four interactive sections. Colab ships this already, so
+      # it is only needed to run the cockpit outside Colab. Without it the
+      # notebook still runs -- each interactive cell falls back to a static
+      # sweep -- so it is a soft dependency by design.
+      - ipywidgets>=8.0
       # converts the hand-authored figures/Fig0_architecture.svg to PDF/PNG
       - cairosvg>=2.7

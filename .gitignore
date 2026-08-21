@@ -6,6 +6,11 @@ gpu_out.txt
 amort*.log
 bench_gpu.log
 run_*.log
+# ...except this one. It is the console record of the full-scale 3-seed RL run
+# (3 x 2000 iters x 4096 envs) that the reported 80.4 +/- 4.9% headroom and
+# rho = +0.991 come from. That script printed without saving arrays, so this
+# log is the only artefact of the run and the README cites it directly.
+!sim/run_final.log
 
 # papers are third-party PDFs; not ours to redistribute
 papers/**/*.pdf
@@ -14,4 +19,22 @@ papers/**/*.pdf
 # The .npz/.npy results total ~84 kB and the Colab notebook needs them after a
 # fresh clone, so a reviewer can see the 26-minute and GPU experiments without
 # re-running them. Regenerate with sim/gen_figdata*.py.
+# Trained weights: the two below are tiny (42 kB + 38 kB) and ARE committed,
+# so the notebook can run live network inference and live RL rollouts after a
+# fresh clone. Any other pickle (optimiser state, checkpoints) stays ignored.
 sim/*.pkl
+!sim/amort_hard_theta.pkl
+!sim/rl_policy.pkl
+
+# --- kept local, not published -------------------------------------------
+# The repository publishes the four deliverables as PDF/Markdown. LaTeX
+# sources, the generated table fragments they \input, and the drafting
+# pipeline are working files: they add clutter for a reader and nothing a
+# reviewer needs. They remain in git history, so `git checkout <sha> -- <path>`
+# brings any of them back.
+submission/*.tex
+submission/01_one_page_pitch.md
+submission/drafting/
+figures/tables*.tex
+# Fig0c was the single-column architecture variant; no document uses it.
+figures/Fig0c_architecture_1col.*

@@ -142,8 +142,20 @@ def figure2():
     fig.subplots_adjust(wspace=0.52)
 
     # ---- (a) RL adaptivity ------------------------------------------------
-    d = np.load("figdata_f3.npz")
-    r, rl, fx = d["r_ti"], d["rl"], d["fixed"]
+    # Prefer the full-scale 3-seed run (analyze_rl2dof.py: 2000 iters x 4096
+    # envs) that the report's 80.4% and rho are quoted from. figdata_f3.npz is
+    # the REDUCED single-seed run from gen_figdata (1200 x 1024) and shows ~66%
+    # and rho=+0.958 -- plotting that beside the full-scale text numbers is the
+    # inconsistency this fallback exists to make visible rather than silent.
+    if os.path.exists("figdata_rl3.npz"):
+        d = np.load("figdata_rl3.npz")
+        r, rl, fx = d["r_ti"], d["rl_best"], d["fixed"]
+    else:
+        print("  NOTE: figdata_rl3.npz missing -- Fig. 2(a) falls back to the "
+              "reduced run.\n        Run 'python analyze_rl2dof.py 3' to match "
+              "the reported numbers.")
+        d = np.load("figdata_f3.npz")
+        r, rl, fx = d["r_ti"], d["rl"], d["fixed"]
     rho_rl = np.corrcoef(r, rl)[0, 1]
     rho_fx = np.corrcoef(r, fx)[0, 1]
     a.plot(r, r, "-", color=C_GREY, lw=1.0)

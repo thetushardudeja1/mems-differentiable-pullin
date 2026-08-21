@@ -13,8 +13,10 @@ Also runs multiple seeds, because a single training run proves nothing.
 
 import sys
 import time
+import pickle
 import jax
 import jax.numpy as jnp
+import numpy as np
 from jax import random, vmap
 
 import env2dof as E
@@ -139,3 +141,28 @@ if __name__ == "__main__":
         print("           roughly a constant. The honest claim is then only")
         print("           'the fixed baseline was too conservative', NOT that")
         print("           the policy infers unobservable parameters.")
+
+    # ------------------------- persist the evidence -------------------------
+    # This script used to print and discard. The reported headline (80.4% of
+    # headroom, rho=+0.99) therefore lived only in a console log, while the
+    # figure and the released checkpoint came from the SMALLER run in
+    # gen_figdata.gen_f3 (1200 iters x 1024 envs) and showed ~66% and +0.958.
+    # Two runs, one claim, no way to tell them apart. Saving the arrays here
+    # makes the headline traceable to a file, and lets the notebook display
+    # the same run the report quotes.
+    np.savez(
+        "figdata_rl3.npz",
+        r_ti=np.asarray(r_ti),
+        fixed=np.asarray(tr_c), oracle=np.asarray(tr_o),
+        dead_fixed=np.asarray(d_c), dead_oracle=np.asarray(d_o),
+        rl_best=np.asarray(tr_rl), dead_rl_best=np.asarray(d_rl),
+        seed_travel=np.asarray(trs), seed_dead=np.asarray(ds),
+        seed_recovered=np.asarray(recs),
+        best_seed=np.asarray(best), n_seeds=np.asarray(n_seeds),
+        n_iters=np.asarray(2000), n_envs=np.asarray(4096),
+        corr_rl=np.asarray(cc), corr_fixed=np.asarray(cc_cons),
+    )
+    with open("rl_policy_best.pkl", "wb") as f:
+        pickle.dump(jax.tree_util.tree_map(np.asarray, all_params[best]), f)
+    print(f"\n  -> figdata_rl3.npz, rl_policy_best.pkl (seed {best}, "
+          f"{float(recs[best]):.1f}% of headroom)")

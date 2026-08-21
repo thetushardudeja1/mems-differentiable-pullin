@@ -7,8 +7,13 @@
 **https://github.com/thetushardudeja1/mems-differentiable-pullin** — public,
 MIT licensed.
 
-**Run it without installing anything:**
+**Run it without installing anything — click the badge, then `Runtime → Run all`:**
+
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/thetushardudeja1/mems-differentiable-pullin/blob/main/notebooks/MEMS_differentiable_pullin.ipynb)
+
+The badge opens this repository's notebook directly in Google Colab. Nothing
+needs to be cloned or installed; the notebook clones the repository in its first
+cell. A free Google account and the free CPU runtime are sufficient.
 
 The notebook executes in about four minutes on a free Colab CPU and reproduces
 the validation suite, the exact-gradient identity check, the optimal-exponent

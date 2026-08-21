@@ -38,26 +38,28 @@ The report's section names — Methodology, Datasets, Model architecture,
 Results — are taken verbatim from the call, in that order, so a reviewer
 working from a checklist can tick every item from the headings alone. Keep them.
 
-## Building the technical report
+## Building the documents
 
-`pdflatex` is **not installed in this environment**, so the report has not been
-compiled here. It is written for `IEEEtran` (conference, two-column) and pulls
-figures from `../figures/` and tables from `../figures/tables.tex`.
-
-Easiest route — Overleaf:
-
-1. New project → upload `02_technical_report.tex`
-2. Upload the six PDFs from `../figures/` plus `tables.tex`
-3. Overleaf provides `IEEEtran.cls` automatically; compile with pdfLaTeX (twice)
-
-Locally, with TeX Live:
+Both PDFs are compiled and committed. The LaTeX sources
+(`01_one_page_pitch.tex`, `02_technical_report.tex`) and the generated table
+fragments (`../figures/tables*.tex`) are kept **locally but not published** —
+the repository ships the deliverables, not the toolchain. They are still in git
+history:
 
 ```bash
-pdflatex 02_technical_report.tex && pdflatex 02_technical_report.tex
+git log --diff-filter=D --name-only -- submission/02_technical_report.tex
+git checkout <sha> -- submission/02_technical_report.tex
 ```
 
-Required packages: `IEEEtran`, `booktabs`, `graphicx`, `amsmath`, `amssymb`,
-`balance`.
+To rebuild after editing, from this directory:
+
+```bash
+tectonic 02_technical_report.tex
+```
+
+`tectonic` is installed in the `tex` conda env and fetches `IEEEtran.cls` and
+the rest on first run. Any pdfLaTeX with `IEEEtran`, `booktabs`, `graphicx`,
+`amsmath`, `amssymb` and `balance` works too — run it twice for references.
 
 ## Figures
 
@@ -70,9 +72,17 @@ Required packages: `IEEEtran`, `booktabs`, `graphicx`, `amsmath`, `amssymb`,
 | Fig. 4 | `Fig4_validation.pdf` | error across sources; 2025 measured device |
 | Fig. 5 | `Fig5_amortized_sweep.pdf` | spec sweep; constraint-layer error reduction |
 
-The report uses Figs. 0, 1, 2 and 4. Figs. 3 and 5 live in the Results &
-Validation document, which has no page limit. All are IEEE-width vector PDFs,
-7.16 in double column. Regenerate with `python make_figures.py` and
+**Where each one is actually used** (checked against the sources, not from
+memory):
+
+* **Report** — Figs. 1, 2 and 5.
+* **Pitch** — `Fig0b_pitch_strip` as the hero image, plus Fig. 3.
+* **Repository README** — `Fig0_architecture.png`.
+* **Results & Validation** (no page limit) — Figs. 3, 4 and 5.
+
+`Fig0c_architecture_1col` is unused by anything and is no longer published.
+Figures are single-column panel grids (3.5 in) except Fig. 0, which is
+double-column at 7.16 in. Regenerate with `python make_figures.py` and
 `python make_arch.py`.
 
 **Figs. 1–5** are matplotlib plots: 8 pt fonts, ticks inward on all four sides,
@@ -99,18 +109,25 @@ introducing a new symbol.
    is IEEE-affiliated**. Confirm the 2026 rules and line up a mentor early;
    nothing in this repository can substitute for it. Also confirm the 2026
    deadline and the submission address.
-2. **Fig. 2(a) shows ρ = +0.96, and every document now says +0.96 to match.**
-   An earlier draft quoted +0.991, which came from a different training run —
-   the figure used 1024 envs × 1200 iterations because the full 4096 × 2000
-   configuration exhausted the 8 GB GPU. Either caption the figure with the
-   configuration used, or re-run at full scale on CPU. Do not reintroduce
-   +0.991 beside a figure reading +0.96.
+2. **RESOLVED — the report's RL numbers are the full-scale run.**
+   **80.4 ± 4.9%** headroom (seeds: 81.5 / 73.9 / 85.6), travel 0.6399 ± 0.0044,
+   0.0% destroyed, **ρ = +0.991**, from 3 seeds × 2000 iters × 4096 envs.
+   Recorded in `sim/run_final.log`, which is now committed so the headline
+   traces to a file. Reproduce: `python analyze_rl2dof.py 3` (~8 min, GPU).
+
+   Fig. 2(a) and `sim/rl_policy.pkl` come from a shorter single-seed run
+   (1200 × 1024) that recovers 65.8% at ρ = +0.958 — kept because it evaluates
+   in under a second in the Colab demo. `analyze_rl2dof.py` now saves
+   `figdata_rl3.npz` and `rl_policy_best.pkl`, and `make_figures.py` prefers
+   them, so re-running it once regenerates Fig. 2(a) from the full-scale run.
 3. **Table III mixes cost types** — 15 s of optimization, 594 s of surrogate
    *training*, 0.04 ms of *inference*. The caption should distinguish one-time
    training cost from per-design cost, or it reads as unfair to the surrogates.
-4. **Page budget.** The report runs slightly over three pages with four
-   figures. Fig. 4 is the first to cut — the validation table carries the same
-   information. Cut Fig. 0 last; it is doing the framing work.
+4. **Page budget — currently exactly 3 pages, with no slack.** Re-check with
+   `pypdf` after any edit. The binding constraint is float *placement*, not word
+   count: a `figure*` can only sit at a page top, so declaring one at its
+   citation point can push it past the last page and add a fourth. Move the
+   declaration earlier before cutting prose.
 
 ## Numbers that appear in more than one place
 
