@@ -33,29 +33,48 @@ MATLAB, and **no training dataset anywhere**.
 ## ▶ Run it yourself — click a badge below
 
 **Click a badge to open that notebook in Google Colab, then choose
-`Runtime → Run all`.** Nothing to install, no licence, no GPU, no dataset.
+`Runtime → Run all`.** Nothing to install, no licence, no GPU, no dataset. Both
+notebooks clone this repository themselves in their first cell, and every figure
+in them is computed while you watch — none of it is a recording.
 
-| Notebook | Launch | What it does |
+| Notebook | Launch | What's inside |
 |---|:---:|---|
-| **1. Main results** — start here | <a href="https://colab.research.google.com/github/thetushardudeja1/mems-differentiable-pullin/blob/main/notebooks/MEMS_differentiable_pullin.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" height="36" alt="Open In Colab"></a> | The evidence: validation against all eight published sources, the exponent reversal, and the inverse design — all computed live |
-| **2. Method deep dive** — optional | <a href="https://colab.research.google.com/github/thetushardudeja1/mems-differentiable-pullin/blob/main/notebooks/method_deep_dive.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" height="36" alt="Open In Colab"></a> | The parts the 3-page report had no room for: shape sensitivity, design without optimisation, adaptive control |
-
-*(A badge is a link — clicking it loads that notebook straight into Colab. You
-do not need to clone anything; each notebook clones this repository in its first
-cell. A free Google account is all that is required. Every result is recomputed
-while you watch.)*
+| **How the method works**<br>`method_deep_dive.ipynb` | <a href="https://colab.research.google.com/github/thetushardudeja1/mems-differentiable-pullin/blob/main/notebooks/method_deep_dive.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" height="36" alt="Open In Colab"></a> | Exact gradients through the bifurcation, where a MEMS actuator is really most sensitive, electrode reshaping, design straight from a specification in 0.04 ms, and adaptive control over 512 devices |
+| **Validation and results**<br>`MEMS_differentiable_pullin.ipynb` | <a href="https://colab.research.google.com/github/thetushardudeja1/mems-differentiable-pullin/blob/main/notebooks/MEMS_differentiable_pullin.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" height="36" alt="Open In Colab"></a> | The evidence: all eight published sources checked live, the optimal-exponent reversal reproduced in both boundary conditions, and the 22.86 → 14.04 V inverse design |
 
 <!-- Both badge URLs embed the repository path. If this is pushed under a
      different owner or name, update BOTH badge links above and REPO_URL in
      each notebook's setup cell, or the clone will fail in Colab. -->
 
-### 1. Main results — [`MEMS_differentiable_pullin.ipynb`](notebooks/MEMS_differentiable_pullin.ipynb)
+### How the method works — [`method_deep_dive.ipynb`](notebooks/method_deep_dive.ipynb)
 
-Executes in **2 min 28 s on a laptop CPU** and about **four minutes on a free
-Colab runtime**. It is deliberately kept to that budget: everything in it is
-computed live, and none of it is a recording.
+This is the one to open if you want to understand *why* the approach works. It
+takes the four ideas the 3-page report had to compress into a paragraph each and
+gives them room, computing every one of them in front of you:
 
-What runs in front of you, in order:
+| | |
+|---|---|
+| **The gradients are exact** | Euler's homogeneous-function theorem holds to **0.000000%** with no fitted constant, and one reverse pass replaces 120 finite-difference solves |
+| **Where the leverage actually is** | sensitivity ∂V<sub>PI</sub>/∂D(ξ) peaks at **ξ = 0.217**, near the clamp — the free tip carries only **16.7%** of it, which is the opposite of where intuition puts it |
+| **Reshaping the electrode** | four devices designed, solved and differentiated from scratch, each held to exactly 2.000 µm of travel so the comparison is fair |
+| **Design without optimisation** | a specification goes in and a finished device comes out in **0.04 ms**; the differentiable hard-constraint layer drives specification error from 0.56% to **exactly zero** |
+| **Adaptive control** | 512 devices with unmeasurable failure ceilings, evaluated in **0.8 s**, recovering headroom at **0.0% destroyed** |
+
+**2 min 48 s** on an idle laptop CPU; allow a few minutes more on a free Colab
+runtime. The fold residual (~1e-8) is printed beside every result, so you can
+see each one is a converged solve rather than a fit.
+
+*No interactive widgets.* An earlier version drove these figures with ipywidgets
+sliders. They render in JupyterLab but not reliably in Colab, where the Output
+widget fails to capture matplotlib
+([colab-cdn-widget-manager#4](https://github.com/googlecolab/colab-cdn-widget-manager/issues/4)).
+Plain figures work in every front-end.
+
+### Validation and results — [`MEMS_differentiable_pullin.ipynb`](notebooks/MEMS_differentiable_pullin.ipynb)
+
+This is the one to open if you want to check that the numbers are real. It runs
+the validation suite and the headline experiments live, in **2 min 28 s** on a
+laptop CPU and about **four minutes** on a free Colab runtime:
 
 | § | What it computes, live | Result you should see |
 |---|---|---|
@@ -66,33 +85,11 @@ What runs in front of you, in order:
 | 6 | Inverse design descending from the uniform gap | **22.86 → 14.04 V**, travel pinned at 2.0000 µm |
 | 7 | The three long experiments | shown precomputed, with the command to reproduce each |
 
-Outputs are stored in the file, so it also reads correctly on GitHub without
+Outputs are stored in both files, so they also read correctly on GitHub without
 being run. The three long experiments (amortized network 26 min, RL 10 min,
-surrogate baselines 10 min) are **not** re-run in the notebook — the arrays are
-committed and the exact command for each is given, since the full codebase is
-released for scale-up.
-
-### 2. Method deep dive — [`method_deep_dive.ipynb`](notebooks/method_deep_dive.ipynb)
-
-Optional. The parts the 3-page report had no room for. It **skips** the validation suite
-and the reversal sweep — those are the primary notebook's job — and spends the
-time on four things instead:
-
-| | |
-|---|---|
-| **Reshaping the electrode** | four devices designed, solved and differentiated from scratch, each with its exact sensitivity ∂V<sub>PI</sub>/∂D(ξ) |
-| **Where the leverage is** | the sensitivity peaks at ξ = 0.217, near the clamp — the tip carries only 16.7% of it |
-| **Design without optimisation** | a specification goes in, a finished device comes out in **0.04 ms**; the hard-constraint layer takes spec error 0.56% → exactly 0 |
-| **Adaptive control** | 512 devices with hidden failure ceilings, evaluated in 0.8 s |
-
-**2 min 48 s** on an idle laptop CPU; allow a few minutes more on a free Colab
-runtime. Every figure is computed when you run it, with the fold residual
-(~1e-8) printed alongside, so nothing in it is a recording.
-
-*No interactive widgets.* An earlier version used ipywidgets sliders; they
-render in JupyterLab but not reliably in Colab, where the Output widget fails to
-capture matplotlib ([colab-cdn-widget-manager#4](https://github.com/googlecolab/colab-cdn-widget-manager/issues/4)).
-Plain figures work in every front-end.
+surrogate baselines 10 min) are **not** re-run here — the arrays are committed
+and the exact command for each is given, since the full codebase is released for
+scale-up.
 
 ---
 
@@ -423,8 +420,8 @@ python inverse_design.py          # free-form design, both BCs ~15 min
 | `sim/analyze_rl2dof.py` | 3-seed RL evaluation; writes `figdata_rl3.npz` |
 | `sim/surrogate_fair.py`, `fno_surrogate.py` | MLP / FNO surrogate baselines |
 | `sim/model2dof.py` | Classical charge-control baseline |
-| `notebooks/MEMS_differentiable_pullin.ipynb` | Colab notebook, ~4 min, every fast experiment live (outputs included) |
-| `notebooks/method_deep_dive.ipynb` | Optional: shape sensitivity, amortized design, adaptive control |
+| `notebooks/method_deep_dive.ipynb` | How the method works: exact gradients, sensitivity, amortized design, adaptive control |
+| `notebooks/MEMS_differentiable_pullin.ipynb` | Validation and results: eight published sources, the reversal, inverse design |
 | `sim/make_arch.py` | System architecture diagram (Fig. 0) |
 | `papers/README.md` | Reference library index (what each paper is used for) |
 | `submission/` | ISMC 2026 deliverables |
