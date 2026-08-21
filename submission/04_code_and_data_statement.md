@@ -1,6 +1,6 @@
 # Code & Data Availability Statement
 
-**Track 2 — AI for MEMS**
+**ISMC 2026 · Track 2, AI for MEMS**
 
 ## Code
 
@@ -12,6 +12,7 @@ against, and the full figure/table generation chain.
 
 | Component | Files |
 |---|---|
+| **Interactive demo (90 s, CPU, outputs included)** | **`sim/demo.ipynb`** |
 | Differentiable solver (fold system, exact gradients) | `sim/beam.py` |
 | Lumped dynamic model (GPU-batched) | `sim/pullin.py` |
 | Validation suite | `sim/test_fold.py`, `validate_beam.py`, `validate_nazemi.py`, `validate_mtest.py`, `model2dof.py` |
@@ -20,7 +21,7 @@ against, and the full figure/table generation chain.
 | RL environment and policy | `sim/env2dof.py`, `train_rl2dof.py`, `analyze_rl2dof.py`, `test_env2dof.py` |
 | Surrogate baselines (MLP, FNO) | `sim/surrogate_fair.py`, `fno_surrogate.py`, `surrogate_vs_direct.py` |
 | Benchmarks | `sim/bench.py`, `bench_one.py` |
-| Figures and tables | `sim/gen_figdata.py`, `gen_figdata2.py`, `make_figures.py`, `make_tables.py` |
+| Figures and tables | `sim/gen_figdata.py`, `gen_figdata2.py`, `make_figures.py`, `make_tables.py`, `make_arch.py` |
 
 ## Data
 
@@ -49,6 +50,9 @@ conda env create -f environment.yml
 conda activate mems
 cd sim
 
+# 90-second interactive demo (no licence, no GPU, outputs already stored)
+jupyter lab demo.ipynb
+
 # validation (each prints PASS/FAIL against published values)
 python test_fold.py
 python validate_beam.py
@@ -58,7 +62,7 @@ python validate_mtest.py
 
 # regenerate all figure data, then figures and LaTeX tables
 python gen_figdata.py && python gen_figdata2.py
-python make_figures.py && python make_tables.py
+python make_figures.py && python make_tables.py && python make_arch.py
 ```
 
 Runtime is a few minutes per validation script and roughly 30 minutes for the

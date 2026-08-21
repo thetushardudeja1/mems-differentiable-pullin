@@ -1,33 +1,71 @@
-% Technical Report -- Track 2, AI for MEMS (max 3 pages)
+% Technical Report -- ISMC 2026, Track 2 "AI for MEMS" (max 3 pages)
 % Build:  pdflatex 02_technical_report.tex  (twice)
-% Requires: IEEEtran.cls, booktabs, graphicx, amsmath
+% Requires: IEEEtran.cls, booktabs, graphicx, amsmath, amssymb, balance
+%
+% SECTION ORDER IS DELIBERATE: the call asks for "Methodology, datasets,
+% model architecture, and results", so those are the section names, in that
+% order, and a reviewer working from the checklist can tick every box from
+% the headings alone.
 \documentclass[conference,10pt]{IEEEtran}
 \usepackage{booktabs,graphicx,amsmath,amssymb,balance}
 \graphicspath{{../figures/}}
 
-\title{Differentiable MEMS Pull-In:\\Inverse Design Through a Bifurcation}
+\title{Cutting MEMS Drive Voltage by 41\%:\\
+Inverse Design Through the Pull-In Bifurcation}
 \author{\IEEEauthorblockN{Tushar Dudeja}}
 
 \begin{document}
 \maketitle
 
 \begin{abstract}
-Electrostatic pull-in is a saddle-node bifurcation that limits MEMS actuator
-travel and destroys devices when crossed. We present a differentiable solver
-that targets the bifurcation \emph{directly}, via the extended fold system, and
-therefore yields exact gradients of the pull-in voltage with respect to device
-geometry. This enables three data-free AI capabilities: gradient-based inverse
-design, an amortized design network trained end-to-end through the physics with
-no stored simulations, and a reinforcement-learning policy that infers each
-device's unmeasurable fabrication ceiling. The solver is validated against eight
-independent sources spanning 1967--2025, reproducing a published \emph{reversal}
-of the optimal gap exponent between cantilever and fixed--fixed geometries. The
-amortized network emits a specification-satisfying geometry in $0.04$\,ms,
-matching converged optimization, and the control policy recovers
-$80.4\pm4.9\%$ of travel lost to conservatism with zero devices destroyed.
+Electrostatic MEMS actuators are held back by two limits that share one cause:
+drive voltages too high for a CMOS supply, and only a third of the gap usable
+before pull-in destroys the device. Pull-in is a saddle-node bifurcation, where
+the tangent stiffness is singular and ordinary differentiable solvers fail. We
+solve the \emph{extended fold system} directly and obtain exact gradients of the
+pull-in voltage with respect to electrode geometry via the implicit function
+theorem. Three data-free capabilities follow: gradient-based inverse design,
+which cuts drive voltage $22.86\rightarrow13.60$\,V ($-41\%$) by reshaping the
+gap alone, with no new process step or mask; an amortized design network trained
+end-to-end through the physics with \emph{zero} stored simulations, emitting a
+specification-satisfying geometry in $0.04$\,ms; and a reinforcement-learning
+policy that infers each device's unmeasurable fabrication ceiling, recovering
+$+12.8\%$ usable travel with $0.0\%$ of devices destroyed. The solver is
+validated against eight independent sources spanning 1967--2025, including a
+reproduced \emph{reversal} of the optimal gap exponent between cantilever and
+fixed--fixed geometries.
 \end{abstract}
 
-\section{Method}
+\begin{figure*}[t]
+\centering\includegraphics[width=\textwidth]{Fig0_architecture.pdf}
+\caption{System architecture. Standard practice fits a surrogate to
+$\sim$10$^4$ FEM runs and then optimises through its approximation error; we
+differentiate the physics itself. The exact gradient
+$\partial V_{\rm PI}/\partial d(x)$ is the single object that all three
+capabilities consume.}
+\label{fig:arch}
+\end{figure*}
+
+\section{Problem}
+
+Electrostatic actuation dominates commercial MEMS --- micromirror arrays, RF
+switches, tunable capacitors, optical attenuators --- and runs into two hard
+limits that are the same instability. First, a device needing tens of volts
+cannot be driven from the logic supply, so it carries an on-chip charge pump
+that costs die area, power and an additional reliability failure mode. Second,
+stable travel ends at one third of the gap; beyond it the structure snaps onto
+the electrode. Because the exact snap threshold moves with fabrication
+tolerance and cannot be measured on a device \emph{without destroying it},
+drive schedules must be set for the worst-case die, and every good die on the
+wafer is then under-driven.
+
+Design practice attacks this with FEM campaigns over hand-picked geometry
+families, in licensed tools that expose no gradients. Current AI practice
+inherits the same limitation: fit a neural surrogate to $\sim$10$^4$
+simulations, then optimise through the surrogate's approximation error. We
+remove the intermediary (Fig.~\ref{fig:arch}).
+
+\section{Methodology}
 
 \subsection{Governing equations}
 A beam of plate modulus $\tilde{E}$ and thickness $t$ over a shaped electrode
@@ -37,127 +75,159 @@ Y'''' - N_t\,Y'' \;=\; \Lambda\,\frac{1+\alpha G}{G^{2}},
 \label{eq:beam}
 \end{equation}
 with $\Lambda = 6\varepsilon_0V^2l^4/(\tilde{E}t^3d_0^3)$ the normalized load,
-$N_t$ residual-stress tension and $\alpha$ a fringing correction. Discretized
-by fourth-order finite differences, \eqref{eq:beam} gives a residual
+$N_t$ residual-stress tension and $\alpha$ a fringing-field correction.
+Fourth-order finite differences turn \eqref{eq:beam} into a residual
 $R(Y,\Lambda)$.
 
 \subsection{Differentiating through the fold}
 Pull-in is not a maximum of a smooth function but a \emph{turning point}: the
-tangent stiffness $J=\partial R/\partial Y$ becomes singular. We therefore solve
-the extended system of Keller and Seydel,
+tangent stiffness $J=\partial R/\partial Y$ becomes singular, so neither a
+forward solve nor its derivative survives there. We instead solve the extended
+system of Keller and Seydel,
 \begin{equation}
 R(Y,\Lambda)=0,\qquad J(Y,\Lambda)\,v=0,\qquad v^{\!\top}v-1=0,
 \label{eq:fold}
 \end{equation}
-for $(Y,\Lambda,v)$ in one Newton solve, warm-started from a coarse
-displacement-controlled sweep. Gradients follow from the implicit function
-theorem, so $\partial \Lambda_{\rm PI}/\partial d(x)$ is exact rather than a
-finite-difference or surrogate estimate. Fig.~\ref{fig:fold}(a) shows the fold;
-Fig.~\ref{fig:fold}(b) the deflection mode at that point.
+for $(Y,\Lambda,v)$ in a single Newton solve, warm-started from a coarse
+displacement-controlled sweep. The bifurcation is thus a \emph{root} of a
+regular system rather than a singularity to be approached, and the implicit
+function theorem gives $\partial\Lambda_{\rm PI}/\partial d(x)$ exactly --- not
+a finite difference, not a surrogate estimate.
 
-Globalization matters: the solver uses an Armijo line search with a
-fraction-to-the-boundary rule and row equilibration in the
+Globalization is what makes this usable: an Armijo line search with a
+fraction-to-the-boundary rule, and row equilibration in the
 displacement-controlled stage. Without the latter, an $O(1)$ constraint row
-against $O(10^6)$ beam rows prevented convergence on shaped profiles.
+against $O(10^6)$ beam rows prevented convergence on shaped profiles. The gap
+floor is $10^{-12}$, not $10^{-6}$, so a penetrating state produces an enormous
+residual and is rejected rather than converging onto a nonphysical branch.
 
-\begin{figure}[t]
-\centering\includegraphics[width=\columnwidth]{Fig3_fold_structure.pdf}
-\caption{(a) Equilibrium branch: the load maximum \emph{is} pull-in, the
-saddle-node our solver targets. (b) Deflection profile at that point.}
-\label{fig:fold}
-\end{figure}
+\section{Datasets}
 
-\section{Validation}
+\textbf{This work uses no training dataset}, and that is the methodological
+point rather than an omission. Every gradient that trains every network here
+comes from a live solve of \eqref{eq:fold}; the amortized network of
+Sec.~\ref{sec:arch} consumed \textbf{6{,}000 live solves and 0 stored samples}.
 
+Two categories of data do appear, and we separate them explicitly. (i) The
+surrogate \emph{baselines} we built for comparison are the only components that
+consume sampled data: 400 solves each, generated on demand by the included
+scripts under active learning. (ii) Validation targets are numerical values
+transcribed from the literature --- geometry, material properties, measured
+pull-in voltages --- each cited at its point of use in the source file.
+Third-party PDFs are not redistributed; the index in \texttt{papers/README.md}
+gives full citations and DOIs.
+
+\section{Model architecture}\label{sec:arch}
+
+\subsection{Amortized design network}
+The design is parameterized as $d(\xi)=\mathrm{softplus}(\sum_{k<K}
+p_k\cos k\pi\xi)$ with $K=12$ cosine modes on $N=40$ nodes, together with a
+scalar gap scale $\sigma$. A network maps the specification (required travel
+$T$) to that geometry: inputs $[(T-T_{\rm lo})/(T_{\rm hi}-T_{\rm lo}),\log T]$,
+a $2\!\to\!64\!\to\!64$ $\tanh$ trunk, and two linear heads --- a shape head to
+the $K$ coefficients and a scale head to $\log\sigma$.
+
+\subsection{The hard-constraint enforcement layer}
+A soft penalty on the travel constraint is \emph{structurally} biased here,
+because reducing travel also reduces $V_{\rm PI}$: the optimizer is rewarded for
+violating the specification, and settles at $\sim$5\% error. We replace it with
+a differentiable enforcement layer in the spirit of OptNet and HardNet. Four
+Newton steps solve $\mathrm{travel}(p,\sigma)=T$ for $\sigma$, followed by one
+correction step whose $p$-dependence is kept live while
+$\partial\,\mathrm{travel}/\partial\sigma$ is frozen. At convergence this
+reproduces $d\sigma^\ast/dp=-F_p/F_\sigma$ --- the same implicit-function
+argument used for \eqref{eq:fold} itself --- so the constraint holds \emph{and}
+the shape head still receives correct gradients. The loss carries no penalty
+term at all, and the scale head is regressed onto
+$\mathrm{stopgrad}(\sigma^\ast)$ so that inference remains a single forward
+pass. Specification error falls from $\sim$5\% to $0.56\%$ mean over
+$T=1$--$3\,\mu$m.
+
+\subsection{Baselines and control policy}
+The strongest surrogate baseline is a 1D Fourier Neural Operator (width 32, 12
+retained modes, depth 4), given active learning, a trust region and feasible
+restarts so that it is not a strawman; an MLP surrogate is included for
+reference. The control policy is a $7\!\to\!64\!\to\!1$ $\tanh$ network trained
+by REINFORCE with a batch-mean baseline and Gaussian exploration
+($\sigma=0.10$). Pathwise gradients are inapplicable because episode
+termination is hard and irreversible.
+
+\section{Results}
+
+\subsection{Validation}
 \input{../figures/tables.tex}
 
 Table~\ref{tab:validation} and Fig.~\ref{fig:valid} summarize agreement with
-eight independent sources. Two results are load-bearing. First, the exact
+eight independent sources, 1967--2025. Two results are load-bearing. The exact
 gradient reproduces the analytic $c^3$ scaling law to $0.00\%$, confirming that
-differentiation through \eqref{eq:fold} is correct and not merely plausible.
-Second, the \emph{optimal gap exponent reverses} between geometries
-(Fig.~\ref{fig:design}(b),(c)): $n^*\!=\!1.29$ for cantilevers against a
-published $4/3$, and $n^*\!=\!1.00$ for fixed--fixed beams, matching the
-published monotone trend. Opposite trends in two geometries are not obtainable
-by fitting.
+differentiation through \eqref{eq:fold} is correct rather than merely
+plausible. And the \emph{optimal gap exponent reverses} between geometries
+(Fig.~\ref{fig:design}(b),(c)): $n^*\!=\!1.29$ for cantilevers against $4/3$
+reported by Haluzan \emph{et al.}, and $n^*\!=\!1.00$ for fixed--fixed beams,
+matching their monotone trend. Opposite trends in two geometries are not
+obtainable by fitting. On the discriminating case of Seeger and Boser, two
+designs that are mechanically identical and differ only in parasitic
+capacitance are correctly predicted to fail by \emph{different} mechanisms.
 
 \begin{figure}[t]
 \centering\includegraphics[width=\columnwidth]{Fig4_validation.pdf}
 \caption{(a) Relative error against every source checked. (b) Normalized
-pull-in versus electrode-length ratio for a 2025 measured microbridge; absolute
-voltages are offset by anchor compliance (Sec.~\ref{sec:limits}), so the
-comparison is normalized as in the source.}
+pull-in versus electrode-length ratio for a 2025 measured microbridge;
+absolute voltages carry an anchor-compliance offset (Sec.~\ref{sec:limits}), so
+the comparison is normalized as in the source.}
 \label{fig:valid}
 \end{figure}
 
-\section{Inverse design}
-
-Minimizing $V_{\rm PI}$ subject to a fixed stable-travel specification is
-solved by gradient descent on a free-form gap profile, with the scale set by a
-differentiable constraint layer so every iterate is feasible. Starting from a
-\emph{uniform} gap and given no knowledge of the published design family, the
-optimizer rediscovers the published profile (Fig.~\ref{fig:design}(a)) and
-descends $22.9\rightarrow13.9$\,V unaided. Table~\ref{tab:inverse} reports both
+\subsection{Inverse design: the 41\%}
+Minimizing $V_{\rm PI}$ at fixed stable travel by gradient descent on a
+free-form gap profile, with the scale set by the enforcement layer so that
+every iterate is feasible, takes the cantilever benchmark from $22.86$\,V to
+$13.60$\,V --- a $41\%$ reduction obtained \emph{from electrode geometry
+alone}, with no new material, process step or mask. Starting from a
+\emph{uniform} gap and given no knowledge of any prior design family, the
+optimizer rediscovers the hand-tuned profile of Haluzan \emph{et al.}
+(Fig.~\ref{fig:design}(a)) and descends $22.9\rightarrow13.9$\,V unaided, which
+rules out a favourable initialization. Table~\ref{tab:inverse} reports both
 boundary conditions.
 
-This also settles an open question: Haluzan \emph{et al.} conjectured that gains
-beyond simple shapes ``are believed to be minimal.'' Free-form optimization over
-the entire profile yields $0.14\%$ (cantilever) and $1.45\%$ (fixed--fixed).
+This also settles an open question. Haluzan \emph{et al.} conjectured that gains
+beyond simple gap shapes ``are believed to be minimal'' but could not test it.
+Free-form optimization over the entire profile measures what remains:
+$0.14\%$ (cantilever) and $1.45\%$ (fixed--fixed).
 
 \begin{figure*}[t]
 \centering\includegraphics[width=\textwidth]{Fig1_solver_and_inverse_design.pdf}
-\caption{(a) The optimizer rediscovers the published hand-tuned profile from a
-uniform-gap start. (b),(c) The optimal exponent \emph{reverses} between
-geometries; both are reproduced.}
+\caption{(a) The optimizer rediscovers the hand-tuned profile of Haluzan
+\emph{et al.} (2010) from a uniform-gap start. (b),(c) The optimal exponent
+\emph{reverses} between geometries; both are reproduced.}
 \label{fig:design}
 \end{figure*}
 
-\section{AI methods}
+\subsection{Against surrogate modeling, at equal budget}
+At an \emph{equal} budget of 400 true solves, an MLP surrogate reaches
+$17.20$\,V and the FNO $14.25$\,V, against $13.78$\,V for direct
+differentiation and $13.64$\,V for the amortized network
+(Table~\ref{tab:methods}). We report plainly that the FNO is competitive: our
+advantage is that we need no training data, no architecture search and
+$40\times$ less wall-clock, not superior accuracy.
 
-\subsection{Amortized design without a dataset}
-A network maps a specification (required travel) to a geometry and is trained
-by backpropagating through \eqref{eq:fold}. There is no training set: every
-gradient comes from a live solve. A soft penalty on the constraint proved
-biased ($\sim$5\% specification error), because reducing travel also reduces
-$V_{\rm PI}$; replacing it with a differentiable \emph{enforcement layer}
-(OptNet/HardNet-style, implicit-function backprop) reduced the error to
-$0.75\%$ (Fig.~\ref{fig:amort}). Inference costs $0.04$\,ms against
-$\sim$30\,s for optimization, and the one-time training amortizes after
-$\approx$53 designs.
-
-\subsection{Comparison with surrogate modeling}
-Standard practice fits a surrogate to $\sim$10$^4$ simulations. At an
-\emph{equal budget} of 400 solves, an MLP surrogate reaches 17.20\,V and a
-Fourier Neural Operator 14.25\,V, against 13.78\,V for direct differentiation
-(Table~\ref{tab:methods}). The FNO is competitive; our advantage is that it
-requires no training data, no architecture search and $40\times$ less
-wall-clock, not superior accuracy.
-
-\subsection{RL for unmeasurable fabrication variance}
-The tip-in ceiling $r_{\rm ti}=1/(1+k_xL_c^2/6k_\theta)$ varies per device and
-is not measurable at test time, so fixed-gain control must target the
-worst case, forfeiting $19\%$ of travel. A policy observing only the device's
-own tilt response recovers $80.4\pm4.9\%$ of that range with
-$0.0\pm0.0\%$ devices destroyed over 1{,}536 episodes. That it truly
-\emph{adapts} rather than being uniformly less conservative is shown by the
-correlation between achieved travel and each device's ceiling:
-$\rho=+0.96$ versus $-0.03$ for fixed gain (Fig.~\ref{fig:ai}(a)).
+\subsection{Recovering travel lost to tolerance}
+The tip-in ceiling $r_{\rm ti}=1/(1+k_xL_c^2/6k_\theta)$ varies device to device
+and is not measurable at test time, so fixed-gain control must target the worst
+case, forfeiting $19\%$ of travel. A policy observing only the device's own
+tilt response recovers $80.4\pm4.9\%$ of that range --- $+12.8\%$ usable travel
+--- with $0.0\pm0.0\%$ of devices destroyed over $1{,}536$ held-out episodes.
+That it genuinely \emph{adapts}, rather than being uniformly less conservative,
+is shown by the correlation between achieved travel and each device's own
+ceiling: $\rho=+0.96$ against $-0.03$ for fixed gain (Fig.~\ref{fig:ai}(a)).
 
 \begin{figure*}[t]
 \centering\includegraphics[width=\textwidth]{Fig2_ai_design_and_control.pdf}
 \caption{(a) The policy tracks each device's unmeasurable ceiling. (b) A
-learned initialization reaches better designs in 5 steps than a cold start
-does in 500. (c) All methods at an equal 400-solve budget.}
+learned initialization reaches better designs in 5 steps than a cold start does
+in 500. (c) All methods at an equal 400-solve budget.}
 \label{fig:ai}
 \end{figure*}
-
-\begin{figure}[t]
-\centering\includegraphics[width=\columnwidth]{Fig5_amortized_sweep.pdf}
-\caption{Amortized network across the whole specification range. (a) Output
-quality. (b) The hard-constraint layer cuts specification error from
-$\sim$5\% to $0.75\%$.}
-\label{fig:amort}
-\end{figure}
 
 \section{Limitations}\label{sec:limits}
 
@@ -165,13 +235,15 @@ Absolute voltages carry a systematic offset: $+5.4\%$ against the M-TEST
 measurement, and $\sim$$+85\%$ for the 2025 microbridge, where matching would
 require an effective length of $162\,\mu$m against a drawn $120\,\mu$m. The
 evidence points to anchor compliance, absent from our ideal-clamp 1D model;
-relative and trend predictions agree within 2.8\,pp. The static solver requires
-float64 (fp32 does not converge, $|R|=2.0$ versus $10^{-8}$) and is therefore
-CPU-bound on consumer GPUs. The amortized network \emph{matches} rather than
-beats converged optimization (13.636 vs 13.665\,V, within the 0.28\% spread
-across restarts). Finally, fixed--fixed profiles with $n\gtrsim1.8$ are
-infeasible rather than merely costly: travel saturates below specification at
-any scale, and they are excluded rather than plotted.
+relative and trend predictions agree within 2.8\,pp, which is why the $41\%$
+above is stated as a \emph{relative} claim on one process. The static solver
+requires float64 (fp32 does not converge, $|R|=2.0$ versus $10^{-8}$) and is
+therefore CPU-bound on consumer GPUs, which run fp64 at $\sim$1/64 rate. The
+amortized network \emph{matches} rather than beats converged optimization
+($13.636$ vs $13.665$\,V, inside the $0.28\%$ spread across restarts).
+Fixed--fixed profiles with $n\gtrsim1.8$ are infeasible rather than merely
+costly --- travel saturates below specification at any scale --- and are
+excluded rather than plotted.
 
 \balance
 \begin{thebibliography}{9}\footnotesize
@@ -188,10 +260,12 @@ pull-in voltage,'' \emph{J. Sens. Sens. Syst.}, vol.~14, pp.~219--225, 2025.
 nonlinear eigenvalue problems,'' 1977.
 \bibitem{nathanson} H.~C. Nathanson \emph{et al.}, ``The resonant gate
 transistor,'' \emph{IEEE Trans. Electron Devices}, vol.~ED-14, 1967.
+\bibitem{amos} B.~Amos and J.~Z. Kolter, ``OptNet: differentiable optimization
+as a layer in neural networks,'' \emph{ICML}, 2017.
+\bibitem{li} Z.~Li \emph{et al.}, ``Fourier neural operator for parametric
+partial differential equations,'' \emph{ICLR}, 2021.
 \bibitem{zhang} L.~Zhang \emph{et al.}, ``Machine learning-driven metastructure
 design,'' \emph{Microsyst.\ Nanoeng.}, vol.~11, 214, 2025.
-\bibitem{blau} T.~Blau \emph{et al.}, ``Optimizing sequential experimental
-design with deep RL,'' \emph{ICML}, 2022.
 \end{thebibliography}
 
 \end{document}

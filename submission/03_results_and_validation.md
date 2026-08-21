@@ -1,9 +1,25 @@
 # Results & Validation
 
-**Track 2 — AI for MEMS** · Quantitative metrics with baseline comparisons
+**ISMC 2026 · Track 2, AI for MEMS** · Quantitative metrics with baseline
+comparisons
 
 Every number below was produced by a named script in `sim/` and can be
 regenerated from a clean checkout. Results that went against us are included.
+
+## Headline device outcomes
+
+| Outcome | Result | Baseline it is measured against |
+|---|---|---|
+| **Drive voltage, same process and mask count** | **22.86 → 13.60 V (−41%)** | uniform gap, identical travel spec, matched grid |
+| **Usable travel recovered from tolerance margin** | **+12.8%**, at **0.0% devices destroyed** | best safe fixed-gain target |
+| **Design turnaround** | **15 s**, laptop CPU, no licence | FEM campaign over a hand-picked family |
+| **Per-design cost once trained** | **0.04 ms**, spec met to 0.56% | ~30 s of optimization |
+
+**Interactive demo:** `sim/demo.ipynb` runs items 1 and 3 of that table live on
+a laptop CPU in ~90 s, with outputs already stored in the file. It reproduces
+22.864 V for the baseline, verifies the exact gradient against the analytic
+`c³` law to **0.000000%**, and drives 22.86 → 14.04 V in 150 gradient steps
+while holding travel pinned at 2.0000 µm.
 
 ---
 
@@ -73,7 +89,9 @@ competitive.** Our advantage is zero training data, no architecture search and
 **Amortized network.** Trained through the solver with **zero stored
 simulations** (1,577 s, 6,000 live solves). Replacing a soft constraint penalty
 with a differentiable enforcement layer cut specification error from ~5% to
-**0.75%** across the full range T = 1–3 µm. Warm-starting from the network
+**0.56% mean / 2.14% worst case** over a 17-point sweep of the full range
+T = 1–3 µm (`gen_figdata2.py`, plotted in Fig. 5(b)); the coarser 5-point
+evaluation in `amortized_hard.py` gives 0.75% mean. Warm-starting from the network
 reaches a better design in **5 optimization steps than a cold start does in
 500**.
 
@@ -130,8 +148,9 @@ ceiling bin, including the most fragile.
 
 ```bash
 conda env create -f environment.yml && conda activate mems && cd sim
+jupyter lab demo.ipynb          # 90 s, laptop CPU, no licence, no GPU
 python test_fold.py && python validate_beam.py && python model2dof.py
 python validate_nazemi.py && python validate_mtest.py
 python gen_figdata.py && python gen_figdata2.py
-python make_figures.py && python make_tables.py
+python make_figures.py && python make_tables.py && python make_arch.py
 ```

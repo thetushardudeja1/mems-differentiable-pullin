@@ -1,12 +1,25 @@
-# Differentiable MEMS Pull-In: Inverse Design Through a Bifurcation
+# Cutting MEMS Drive Voltage by 41% — Inverse Design Through the Pull-In Bifurcation
 
-An open, COMSOL-free, **differentiable** solver for electrostatic MEMS pull-in,
-and the AI methods it enables: gradient-based inverse design, an amortized
-design network trained with **no dataset**, and a reinforcement-learning policy
-for safe operation under unmeasurable fabrication variance.
+![System architecture](figures/Fig0_architecture.png)
 
-The distinguishing technical point: pull-in **is** a saddle-node bifurcation, so
-we solve the extended fold system
+Electrostatic MEMS actuators are held back by two limits that share one cause.
+Drive voltages are too high for a CMOS supply, so the device carries a charge
+pump. And only a third of the gap is usable, because the exact snap threshold
+moves with fabrication tolerance and **cannot be measured without destroying
+the device** — so every die is driven for the worst case.
+
+Both limits are pull-in. This repository attacks it directly.
+
+| Device-level outcome | Result |
+|---|---|
+| **Drive voltage, same process and mask count** | **22.86 V → 13.60 V (−41%)**, electrode geometry only |
+| **Usable travel recovered from tolerance margin** | **+12.8%**, at **0.0% of devices destroyed** |
+| **Design turnaround** | **15 s** on a laptop CPU, no licence |
+| **Per-design cost once trained** | **0.04 ms**, spec met to 0.56% |
+
+The technical point that makes it work: pull-in **is** a saddle-node
+bifurcation, where the tangent stiffness is singular and an ordinary
+differentiable solver breaks down. So we solve the extended fold system
 
 ```
 R(Y, Λ) = 0 ,   J(Y, Λ) v = 0 ,   vᵀv − 1 = 0
@@ -14,11 +27,21 @@ R(Y, Λ) = 0 ,   J(Y, Λ) v = 0 ,   vᵀv − 1 = 0
 
 directly (Keller 1977; Seydel) and take **exact gradients through the
 bifurcation itself**, rather than differentiating a forward solve or fitting a
-surrogate.
+surrogate to ~10⁴ archived simulations. No COMSOL, no ANSYS, no MATLAB, and
+**no training dataset anywhere**.
+
+## See it in 90 seconds
+
+[`sim/demo.ipynb`](sim/demo.ipynb) runs end to end on a laptop CPU with its
+outputs already stored, so you can read it without running it. It sizes the
+baseline device (22.864 V), shows that pull-in is a fold, verifies the exact
+gradient against the analytic `c³` law to **0.000000%**, and then drives
+**22.86 → 14.04 V** in 150 gradient steps while holding the travel
+specification pinned at 2.0000 µm.
 
 ---
 
-## Headline results
+## Validation and method results
 
 | Result | Value |
 |---|---|
@@ -28,7 +51,7 @@ surrogate.
 | Instability mechanism, Seeger & Boser designs | **3 / 3** correct |
 | Optimal exponent, cantilever vs. fixed–fixed | **n\*=1.29 / n\*=1.00** (reversal reproduced) |
 | Amortized design, inference | **0.04 ms** (vs ~30 s optimization) |
-| Amortized spec error (hard-constraint layer) | **0.75%** (soft penalty: ~5%) |
+| Amortized spec error (hard-constraint layer) | **0.56%** mean, 2.14% max (soft penalty: ~5%) |
 | RL headroom recovered / devices destroyed | **80.4 ± 4.9%** / **0.0%** |
 | Best design found for the Haluzan benchmark | **13.599 V** |
 
@@ -44,6 +67,8 @@ conda env create -f environment.yml
 conda activate mems
 cd sim
 
+jupyter lab demo.ipynb       # 90-second interactive demo, CPU only
+
 python test_fold.py          # solver + exact-gradient validation
 python validate_beam.py      # distributed beam vs. literature
 python model2dof.py          # 2-DOF tip-in vs. Seeger & Boser
@@ -55,7 +80,7 @@ Reproduce every figure from saved arrays (no experiment re-run):
 
 ```bash
 python gen_figdata.py && python gen_figdata2.py
-python make_figures.py && python make_tables.py
+python make_figures.py && python make_tables.py && python make_arch.py
 ```
 
 ---
@@ -71,6 +96,8 @@ python make_figures.py && python make_tables.py
 | `sim/env2dof.py`, `train_rl2dof.py` | 2-DOF RL environment and policy |
 | `sim/surrogate_fair.py`, `fno_surrogate.py` | MLP / FNO surrogate baselines |
 | `sim/model2dof.py` | Classical charge-control baseline |
+| `sim/demo.ipynb` | 90-second interactive demo (outputs included) |
+| `sim/make_arch.py` | System architecture diagram (Fig. 0) |
 | `papers/README.md` | Reference library index (what each paper is used for) |
 
 ---
