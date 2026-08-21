@@ -30,25 +30,28 @@ bifurcation itself**, rather than differentiating a forward solve or fitting a
 surrogate to tens of thousands of archived simulations. No COMSOL, no ANSYS, no
 MATLAB, and **no training dataset anywhere**.
 
-## ▶ Run it yourself — click the badge below
+## ▶ Run it yourself — click a badge below
 
-**Click this badge to open the notebook in Google Colab, then choose
-`Runtime → Run all`.** Nothing to install, no licence, no GPU, no dataset. It
-finishes in about four minutes on the free CPU runtime.
+**Click a badge to open that notebook in Google Colab, then choose
+`Runtime → Run all`.** Nothing to install, no licence, no GPU, no dataset.
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/thetushardudeja1/mems-differentiable-pullin/blob/main/notebooks/MEMS_differentiable_pullin.ipynb)
+| Notebook | | Runtime | What it does |
+|---|---|---|---|
+| **1. Main results** — start here | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/thetushardudeja1/mems-differentiable-pullin/blob/main/notebooks/MEMS_differentiable_pullin.ipynb) | **~4 min** | The evidence: validation against all eight published sources, the exponent reversal, and the inverse design — all computed live |
+| **2. Method deep dive** — optional | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/thetushardudeja1/mems-differentiable-pullin/blob/main/notebooks/method_deep_dive.ipynb) | **~3 min** | The parts the 3-page report had no room for: shape sensitivity, design without optimisation, adaptive control |
 
-*(The badge is a link — clicking it loads this repository's notebook straight
-into Colab. You do not need to clone anything; the notebook clones the
-repository itself in its first cell. A free Google account is all that is
-required. Every result below is recomputed while you watch.)*
+*(A badge is a link — clicking it loads that notebook straight into Colab. You
+do not need to clone anything; each notebook clones this repository in its first
+cell. A free Google account is all that is required. Every result is recomputed
+while you watch.)*
 
-<!-- The badge URL embeds the repository path. If this is pushed under a
-     different owner or name, update BOTH this link and REPO_URL in the
-     notebook's setup cell, or the clone will fail in Colab. -->
+<!-- Both badge URLs embed the repository path. If this is pushed under a
+     different owner or name, update BOTH badge links above and REPO_URL in
+     each notebook's setup cell, or the clone will fail in Colab. -->
 
-[`notebooks/MEMS_differentiable_pullin.ipynb`](notebooks/MEMS_differentiable_pullin.ipynb)
-executes in **2 min 28 s on a laptop CPU** and about **four minutes on a free
+### 1. Main results — [`MEMS_differentiable_pullin.ipynb`](notebooks/MEMS_differentiable_pullin.ipynb)
+
+Executes in **2 min 28 s on a laptop CPU** and about **four minutes on a free
 Colab runtime**. It is deliberately kept to that budget: everything in it is
 computed live, and none of it is a recording.
 
@@ -69,12 +72,9 @@ surrogate baselines 10 min) are **not** re-run in the notebook — the arrays ar
 committed and the exact command for each is given, since the full codebase is
 released for scale-up.
 
-### Optional: a deeper look at the method
+### 2. Method deep dive — [`method_deep_dive.ipynb`](notebooks/method_deep_dive.ipynb)
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/thetushardudeja1/mems-differentiable-pullin/blob/main/notebooks/method_deep_dive.ipynb)
-&nbsp;[`notebooks/method_deep_dive.ipynb`](notebooks/method_deep_dive.ipynb)
-
-The parts the 3-page report had no room for. It **skips** the validation suite
+Optional. The parts the 3-page report had no room for. It **skips** the validation suite
 and the reversal sweep — those are the primary notebook's job — and spends the
 time on four things instead:
 
