@@ -1,0 +1,16 @@
+THIRD-PARTY MATERIAL
+
+The MIT licence in LICENSE covers the code, figures and documents authored in
+this repository. It does not cover third-party material.
+
+Short quotations from published papers, and numerical values transcribed from
+them as validation targets (geometry, material properties, measured voltages),
+remain the property of their respective copyright holders. They are used here
+for identification, comparison and scholarly citation.
+
+No third-party PDFs are redistributed. papers/README.md gives full citations
+and DOIs so any reader can obtain the originals from the publisher.
+
+Dependencies carry their own licences: JAX and jaxlib (Apache-2.0), NumPy
+(BSD-3-Clause), Matplotlib (PSF-based), cairosvg (LGPL-3.0), ipywidgets and
+JupyterLab (BSD-3-Clause). All are compatible with distribution under MIT.
