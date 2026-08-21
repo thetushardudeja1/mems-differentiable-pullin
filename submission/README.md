@@ -8,7 +8,7 @@ MEMS Technical Committee.
 | 1 | One-Page Pitch | `01_one_page_pitch.tex` → `.pdf` | **1 page, compiled** |
 | 2 | Technical Report (max 3 pages) | `02_technical_report.tex` → `.pdf` | **3 pages, compiled** |
 | 3 | Results & Validation (+ demo/notebook encouraged) | `03_results_and_validation.md`, `../notebooks/MEMS_differentiable_pullin.ipynb` | ready |
-| 4 | Code & Data Availability | `04_code_and_data_statement.md` | **needs the repo URL** |
+| 4 | Code & Data Availability | `04_code_and_data_statement.md` | ready — repo is public |
 
 Both PDFs build with `tectonic <file>.tex` (installed in the `tex` conda env)
 or any pdfLaTeX. Page counts are hard limits and there is no slack in either —

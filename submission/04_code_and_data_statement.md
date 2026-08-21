@@ -2,6 +2,18 @@
 
 **ISMC 2026 · Track 2, AI for MEMS**
 
+## Repository
+
+**https://github.com/thetushardudeja1/mems-differentiable-pullin** — public,
+MIT licensed.
+
+**Run it without installing anything:**
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/thetushardudeja1/mems-differentiable-pullin/blob/main/notebooks/MEMS_differentiable_pullin.ipynb)
+
+The notebook executes in about four minutes on a free Colab CPU and reproduces
+the validation suite, the exact-gradient identity check, the optimal-exponent
+reversal and the inverse-design descent, live. No licence, no GPU, no dataset.
+
 ## Code
 
 All code is released in this repository under an open licence. It is
