@@ -69,29 +69,30 @@ surrogate baselines 10 min) are **not** re-run in the notebook — the arrays ar
 committed and the exact command for each is given, since the full codebase is
 released for scale-up.
 
-### Optional: an interactive version
+### Optional: a deeper look at the method
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/thetushardudeja1/mems-differentiable-pullin/blob/main/notebooks/interactive_cockpit.ipynb)
-&nbsp;[`notebooks/interactive_cockpit.ipynb`](notebooks/interactive_cockpit.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/thetushardudeja1/mems-differentiable-pullin/blob/main/notebooks/method_deep_dive.ipynb)
+&nbsp;[`notebooks/method_deep_dive.ipynb`](notebooks/method_deep_dive.ipynb)
 
-If you would rather *drive* the method than read it. Four sliders, each of which
-re-solves the **real saddle-node bifurcation** on every drag — nothing
-interpolated, tabulated or cached, with the fold residual printed each frame so
-you can see it is a converged solve:
+The parts the 3-page report had no room for. It **skips** the validation suite
+and the reversal sweep — those are the primary notebook's job — and spends the
+time on four things instead:
 
 | | |
 |---|---|
-| **Design cockpit** | reshape the electrode; V<sub>PI</sub> and the exact sensitivity ∂V<sub>PI</sub>/∂D(ξ) update in ~15 ms per solve |
-| **Beat the optimiser** | hand-tune a device, then watch gradient descent do it |
-| **Instant design** | move a *specification*; a finished device appears in 0.04 ms. Toggle the constraint layer and watch spec error go 0.56% → exactly 0 |
-| **Adaptive control** | 512 devices with hidden failure ceilings, evaluated live in 0.8 s |
+| **Reshaping the electrode** | four devices designed, solved and differentiated from scratch, each with its exact sensitivity ∂V<sub>PI</sub>/∂D(ξ) |
+| **Where the leverage is** | the sensitivity peaks at ξ = 0.217, near the clamp — the tip carries only 16.7% of it |
+| **Design without optimisation** | a specification goes in, a finished device comes out in **0.04 ms**; the hard-constraint layer takes spec error 0.56% → exactly 0 |
+| **Adaptive control** | 512 devices with hidden failure ceilings, evaluated in 0.8 s |
 
-Measured at **5–10 minutes** on a laptop CPU (the spread is background load) —
-longer than the notebook above,
-because it compiles the interactive kernels. It deliberately **skips** the
-validation suite and the reversal sweep, since those are the primary notebook's
-job. Sliders need a live kernel; on GitHub each interactive cell shows the
-static snapshot printed above it.
+**2 min 48 s** on an idle laptop CPU; allow a few minutes more on a free Colab
+runtime. Every figure is computed when you run it, with the fold residual
+(~1e-8) printed alongside, so nothing in it is a recording.
+
+*No interactive widgets.* An earlier version used ipywidgets sliders; they
+render in JupyterLab but not reliably in Colab, where the Output widget fails to
+capture matplotlib ([colab-cdn-widget-manager#4](https://github.com/googlecolab/colab-cdn-widget-manager/issues/4)).
+Plain figures work in every front-end.
 
 ---
 
@@ -423,7 +424,7 @@ python inverse_design.py          # free-form design, both BCs ~15 min
 | `sim/surrogate_fair.py`, `fno_surrogate.py` | MLP / FNO surrogate baselines |
 | `sim/model2dof.py` | Classical charge-control baseline |
 | `notebooks/MEMS_differentiable_pullin.ipynb` | Colab notebook, ~4 min, every fast experiment live (outputs included) |
-| `notebooks/interactive_cockpit.ipynb` | Optional interactive version: sliders that re-solve the fold live |
+| `notebooks/method_deep_dive.ipynb` | Optional: shape sensitivity, amortized design, adaptive control |
 | `sim/make_arch.py` | System architecture diagram (Fig. 0) |
 | `papers/README.md` | Reference library index (what each paper is used for) |
 | `submission/` | ISMC 2026 deliverables |

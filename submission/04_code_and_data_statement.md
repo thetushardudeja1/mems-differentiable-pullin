@@ -30,7 +30,7 @@ against, and the full figure/table generation chain.
 | Component | Files |
 |---|---|
 | **Interactive notebook — Colab-ready, ~4 min CPU, outputs included** | **`notebooks/MEMS_differentiable_pullin.ipynb`** |
-| Optional interactive cockpit (live sliders, 5-10 min CPU) | `notebooks/interactive_cockpit.ipynb` |
+| Optional method deep-dive (~3 min CPU) | `notebooks/method_deep_dive.ipynb` |
 | Differentiable solver (fold system, exact gradients) | `sim/beam.py` |
 | Lumped dynamic model (GPU-batched) | `sim/pullin.py` |
 | Validation suite | `sim/test_fold.py`, `validate_beam.py`, `validate_nazemi.py`, `validate_mtest.py`, `model2dof.py` |
