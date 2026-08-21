@@ -86,7 +86,8 @@ you can see it is a converged solve:
 | **Instant design** | move a *specification*; a finished device appears in 0.04 ms. Toggle the constraint layer and watch spec error go 0.56% → exactly 0 |
 | **Adaptive control** | 512 devices with hidden failure ceilings, evaluated live in 0.8 s |
 
-Measured at **5 minutes** on a laptop CPU — longer than the notebook above,
+Measured at **5–10 minutes** on a laptop CPU (the spread is background load) —
+longer than the notebook above,
 because it compiles the interactive kernels. It deliberately **skips** the
 validation suite and the reversal sweep, since those are the primary notebook's
 job. Sliders need a live kernel; on GitHub each interactive cell shows the
