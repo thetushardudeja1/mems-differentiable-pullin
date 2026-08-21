@@ -410,7 +410,7 @@ python inverse_design.py          # free-form design, both BCs ~15 min
 RL results are reported across 3 independent seeds with standard deviations, on
 a fixed held-out set of 512 devices.
 
-**Licence.** Code: MIT. Figures and text: CC BY 4.0.
+**Licence.** MIT — see [LICENSE](LICENSE). Use it for anything, including commercially; just keep the copyright notice.
 
 ## References
 

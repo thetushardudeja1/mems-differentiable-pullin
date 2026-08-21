@@ -38,6 +38,7 @@ against, and the full figure/table generation chain.
 | RL environment and policy | `sim/env2dof.py`, `train_rl2dof.py`, `analyze_rl2dof.py`, `test_env2dof.py` |
 | Surrogate baselines (MLP, FNO) | `sim/surrogate_fair.py`, `fno_surrogate.py`, `surrogate_vs_direct.py` |
 | Benchmarks | `sim/bench.py`, `bench_one.py` |
+| Sensitivity map (autodiff vs. finite differences) | `sim/sensitivity_map.py` |
 | Figures and tables | `sim/gen_figdata.py`, `gen_figdata2.py`, `make_figures.py`, `make_tables.py`, `make_arch.py` |
 
 ## Data
@@ -59,8 +60,13 @@ reader can obtain them.
 The result arrays behind every figure (`sim/figdata_*.npz`, `sim/*.npy`, 84 kB
 in total) **are committed**, so the interactive notebook can display the three
 long experiments after a fresh clone without re-running them. They are fully
-regenerable with `gen_figdata.py`. Trained weights (`*.pkl`) are larger and are
-not committed; the training scripts recreate them.
+regenerable with `gen_figdata.py`.
+
+The two trained networks are committed as well — `sim/amort_hard_theta.pkl`
+(42 kB, the amortized design network) and `sim/rl_policy.pkl` (38 kB, the
+adaptive control policy). Both are small enough to publish, so the released
+results can be loaded and re-evaluated directly rather than only described.
+The training scripts regenerate them from scratch.
 
 ## Reproducing everything
 
@@ -108,4 +114,6 @@ deviations, on a fixed held-out set of 512 devices.
 
 ## Licence
 
-Code: MIT. Figures and text in this submission: CC BY 4.0.
+Everything in the repository — code, figures and documents — is released under
+the **MIT Licence**. It permits use, modification and redistribution, including
+commercial use, with attribution. See `LICENSE` in the repository root.
