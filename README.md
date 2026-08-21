@@ -33,14 +33,17 @@ MATLAB, and **no training dataset anywhere**.
 ## ▶ Run it yourself — click a badge below
 
 **Click a badge to open that notebook in Google Colab, then choose
-`Runtime → Run all`.** Nothing to install, no licence, no GPU, no dataset. Both
-notebooks clone this repository themselves in their first cell, and every figure
-in them is computed while you watch — none of it is a recording.
+`Runtime → Run all`.** Nothing to install, no licence, no GPU, no dataset.
+
+They answer two different questions — *how does this work* and *are the numbers
+real* — and together take under seven minutes. Every figure in both is computed
+while you watch; none of it is a recording, and the fold residual (~1e-8) is
+printed beside each result so you can see it converged.
 
 | Notebook | Launch | What's inside |
 |---|:---:|---|
-| **How the method works**<br>`method_deep_dive.ipynb` | <a href="https://colab.research.google.com/github/thetushardudeja1/mems-differentiable-pullin/blob/main/notebooks/method_deep_dive.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" height="36" alt="Open In Colab"></a> | Exact gradients through the bifurcation, where a MEMS actuator is really most sensitive, electrode reshaping, design straight from a specification in 0.04 ms, and adaptive control over 512 devices |
-| **Validation and results**<br>`MEMS_differentiable_pullin.ipynb` | <a href="https://colab.research.google.com/github/thetushardudeja1/mems-differentiable-pullin/blob/main/notebooks/MEMS_differentiable_pullin.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" height="36" alt="Open In Colab"></a> | The evidence: all eight published sources checked live, the optimal-exponent reversal reproduced in both boundary conditions, and the 22.86 → 14.04 V inverse design |
+| **How the method works**<br>`method_deep_dive.ipynb`<br><sub>~3 min</sub> | <a href="https://colab.research.google.com/github/thetushardudeja1/mems-differentiable-pullin/blob/main/notebooks/method_deep_dive.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" height="36" alt="Open In Colab"></a> | **Watch devices get designed.** Four electrodes shaped from scratch, each held to exactly 2.000 µm of travel. See the sensitivity map that says where to cut voltage — it peaks near the **clamp**, not the tip, which is the opposite of intuition. Then a network turns a bare specification into a finished device in **0.04 ms**, and a controller reads 512 devices' hidden failure limits without breaking one. |
+| **Validation and results**<br>`MEMS_differentiable_pullin.ipynb`<br><sub>~4 min</sub> | <a href="https://colab.research.google.com/github/thetushardudeja1/mems-differentiable-pullin/blob/main/notebooks/MEMS_differentiable_pullin.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" height="36" alt="Open In Colab"></a> | **Watch the claims get checked.** Eight published sources from 1967 to 2025 — two of them physically measured devices — verified in front of you, printing PASS as they go. The optimal exponent **reverses** between boundary conditions, straight out of the physics, which no surrogate fitted to data could tell you. Then **22.86 V → 14.04 V** of drive voltage comes off, live, with travel pinned at 2.0000 µm the whole way. |
 
 <!-- Both badge URLs embed the repository path. If this is pushed under a
      different owner or name, update BOTH badge links above and REPO_URL in
